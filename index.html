@@ -32,8 +32,60 @@
 
   <main id="main">
     <div class="wrap">
-      <h1>Hazel Lee</h1>
-      <!-- M1: catchphrase, intro [DRAFT], casual photo, availability line, three highlight cards, LinkedIn button (PRD §7.1). -->
+
+      <!-- HERO (PRD §7.1 items 1-4, 6) -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <h1 id="hero-title">Details make it repeatable.</h1>
+          <!-- [DRAFT] intro, PRD §7.1 item 2 -->
+          <p class="intro" data-draft>Hi, I'm Hazel. I study Nanotechnology Engineering at the University of Waterloo and finish in April 2027. Over four co-ops and a cleanroom lab, I've learned that good results come from careful, repeatable work: I ask before I guess, I write things down, and I finish what I start.</p>
+          <p class="availability"><span>Open to semiconductor roles starting May–September 2027</span> · <span>Eligible to work in Canada</span> · <span>Open to relocation</span></p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
+            <a class="btn btn-secondary" href="experience.html">See my experience</a>
+          </div>
+        </div>
+        <!-- PHOTO (PRD §7.1 item 3): hidden until Hazel supplies it (§14 item 5).
+             When it arrives: add class "has-photo" to the section above, then put inside the div below:
+             <img src="assets/img/hazel.jpg" alt="[describe the photo in a few words]" width="600" height="750">
+             (300 KB or less, GPS data stripped, alt text describing the photo) -->
+        <div class="hero-photo"></div>
+      </section>
+
+      <!-- HIGHLIGHTS (PRD §7.1 item 5) -->
+      <section class="highlights" aria-labelledby="highlights-title">
+        <h2 class="section-label" id="highlights-title">Highlights</h2>
+        <ul class="cards">
+          <!-- ENTRY: highlight-cleanroom -->
+          <li>
+            <a class="card" href="projects.html#ne340l">
+              <h3>Cleanroom chip lab</h3>
+              <p>Built MIS capacitors with my lab group: PECVD, photolithography and etching.</p>
+              <span class="more-link">See the project</span>
+            </a>
+          </li>
+          <!-- /ENTRY -->
+          <!-- ENTRY: highlight-helicopter -->
+          <li>
+            <a class="card" href="experience.html#fortisbc">
+              <h3>Helicopter field test</h3>
+              <p>Helped test three fixes for woodpecker damage on transmission poles, by helicopter.</p>
+              <span class="more-link">See FortisBC</span>
+            </a>
+          </li>
+          <!-- /ENTRY -->
+          <!-- ENTRY: highlight-solar -->
+          <li>
+            <a class="card" href="experience.html#sundensity">
+              <h3>Flexible solar cells</h3>
+              <p>Prepared the substrates a solar-cell company built its flexible cells on.</p>
+              <span class="more-link">See SunDensity</span>
+            </a>
+          </li>
+          <!-- /ENTRY -->
+        </ul>
+      </section>
+
     </div>
   </main>
 

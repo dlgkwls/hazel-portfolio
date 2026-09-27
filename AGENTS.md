@@ -30,7 +30,7 @@ Rules for any AI tool (Claude Code, Codex) working on this website. Hazel is not
 5. **Voice:** first person, plain, warm, short sentences. Avoid *passionate, leverage, spearhead, synergy, dynamic, results-driven, cutting-edge*. No exclamation marks, don't overuse dashes, and nothing should sound AI-written.
 6. **Not desperate:** "open to", never "seeking any". The availability line stays small and calm.
 7. **Privacy:** no phone number, student number, partner or coworker names, patient information, or internal company documents or data. Strip GPS data from every photo. No one else's face without their OK; otherwise crop them out.
-8. **Drafts:** blocks marked [DRAFT] in the PRD stay marked (in an HTML comment) until Hazel approves or rewrites them.
+8. **Drafts:** blocks marked [DRAFT] in the PRD carry a `data-draft` attribute (which shows a visible orange DRAFT tag) plus a `<!-- [DRAFT] -->` comment, until Hazel approves or rewrites them. On approval, remove both. Nothing may carry `data-draft` at launch.
 
 ## Files
 
