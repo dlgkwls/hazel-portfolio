@@ -1,0 +1,192 @@
+/* ==========================================================================
+   Hazel Lee portfolio: shared styles
+   Starter design tokens (PRD §8). Change colors in one place: the two token
+   blocks below. The full design pass comes after launch.
+   ========================================================================== */
+
+/* ---- Tokens: light (default) ---- */
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --ink: #1b2a4a;       /* navy: headings */
+  --body: #3a4658;      /* body text */
+  --muted: #7d8a99;     /* silicon gray: dates, captions */
+  --line: #d8dee7;      /* borders, timeline line */
+  --accent: #2f5d9a;    /* links, buttons, focus ring */
+  --on-accent: #ffffff; /* text on accent buttons */
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --max: 1100px;        /* max content width */
+  --measure: 70ch;      /* readable line length */
+  --gutter: clamp(16px, 4vw, 40px);
+  --radius: 8px;
+  color-scheme: light dark;
+}
+
+/* ---- Tokens: dark (follows the visitor's device) ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1522;
+    --surface: #161e2e;
+    --ink: #e8edf5;
+    --body: #c3ccd9;
+    --muted: #8a97a8;
+    --line: #2a3447;
+    --accent: #9db8e6;
+    --on-accent: #0f1522;
+  }
+}
+
+/* ---- Base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--body);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 900px) { body { font-size: 18px; } }
+
+h1, h2, h3 { color: var(--ink); line-height: 1.25; margin: 0 0 0.5em; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.35rem, 2.6vw, 1.7rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 1em; max-width: var(--measure); }
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--accent); text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ---- Layout ---- */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+main { flex: 1 0 auto; padding-top: clamp(32px, 6vw, 64px); padding-bottom: clamp(48px, 8vw, 96px); }
+
+/* Skip link: hidden until focused with the keyboard */
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -60px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  z-index: 10;
+}
+.skip-link:focus { top: 8px; }
+
+/* ---- Header and navigation ---- */
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.site-header .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.site-name {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+.site-nav a {
+  color: var(--body);
+  text-decoration: none;
+  padding: 6px 0;
+  display: inline-block;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--ink); }
+@media (max-width: 360px) { .site-nav ul { gap: 4px 14px; } }
+.site-nav a[aria-current="page"] {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 28px;
+}
+.site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+.site-footer p { margin: 0; }
+
+/* ---- Buttons (used from M1 on) ---- */
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-secondary { background: transparent; color: var(--accent); }
+@media (max-width: 480px) { .btn { display: block; text-align: center; } }
+
+/* ---- Small helpers ---- */
+.muted { color: var(--muted); }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Respect "reduce motion" (no animation in v1, but keep it safe) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
