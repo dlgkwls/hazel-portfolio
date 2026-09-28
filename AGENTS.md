@@ -11,19 +11,23 @@ Rules for any AI tool (Claude Code, Codex) working on this website. Hazel is not
 
 ## Constraints
 
-- Plain static site: HTML and CSS, with only a tiny bit of JavaScript if it's truly needed. No frameworks, no build step, no server.
-- It must work when `index.html` is opened by double-clicking, and on GitHub Pages. Use relative links.
-- "More detail" uses the built-in `<details>` / `<summary>` element, so it works without JavaScript and with a keyboard and screen reader.
-- Light/dark follows the visitor's device through `prefers-color-scheme`. There is no toggle.
-- Comfortable at 380 px wide with no sideways scrolling, up to large desktops.
-- Fast: each page under about 1 MB; each image 300 KB or less (WebP or JPEG). System fonts only.
-- Accessible: semantic headings, alt text on every image, WCAG AA contrast in both modes, visible keyboard focus, `prefers-reduced-motion` respected.
-- Every page has a title like "Hazel Lee · Experience", a meta description and, from M3, an Open Graph image.
-- Design tokens live at the top of `assets/css/site.css`. Change colors there, nowhere else.
+The site is becoming two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `portfolio.html`, the Matcha Lemonade hub (built in F1), and `index.html`, the Fab-to-Atom front door (F2). The old plain pages stay until F3 moves every link to the new pages and deletes them.
+
+- Static files only: no frameworks, no server. It must work when a page is opened by double-clicking, and on GitHub Pages. Use relative links.
+- JavaScript draws the pictures only: Canvas 2D on `portfolio.html`, WebGL on `index.html`. Every word is real HTML text, never drawn on the canvas, and the page reads in full with JavaScript off.
+- `assets/js/glass.js` is built from `../Matcha Lemonade/source/illustration/` by its `build.sh`. Edit the source parts there and rebuild; never edit `glass.js` by hand. The page's words live in `portfolio.html` itself.
+- "Read more" and "More detail" use the built-in `<details>` / `<summary>` element, so they work without JavaScript and with a keyboard and screen reader.
+- The hub is always cream and the front door always dark (no light/dark switching). Text meets WCAG AA; put a solid paper panel behind any text that sits over the drawing.
+- One Google font per page: Instrument Serif (hub), Barlow (front door), with system fallbacks.
+- Comfortable at 375 px wide with no sideways scrolling, up to large desktops.
+- Fast: each page under about 1 MB; each image 300 KB or less (WebP or JPEG).
+- Accessible: semantic headings, alt text on every image, visible keyboard focus, `prefers-reduced-motion` respected (the drink appears step by step without pouring).
+- Every page has a title ("Hazel Lee", "Hazel Lee · Portfolio"), a meta description and an Open Graph image (added in F2).
+- Hub design tokens live at the top of `assets/css/portfolio.css`; the old pages use `assets/css/site.css`. Change colors there, nowhere else.
 
 ## Content rules
 
-1. **Simple first, technical on click.** Timeline entries show the plain bullets; "More detail" reveals the technical ones.
+1. **Simple first, technical on click.** Each card shows dates, organization, title, city, the summary and "What I learned"; "Read more" opens the plain bullets, and "More detail" inside it the technical ones.
 2. **Copy bullets as written.** You may trim a clause, fix a typo, or merge two bullets about the same task. Never add a new fact, number, tool or result.
 3. **Contributor-level verbs.** Never write Led (except FortisBC's weekly Monday meeting), Approved, Engineered, Designed, Optimized, Diagnosed, Automated, Validated or "Identified the root cause".
 4. **Banned claims:** see PRD §6 (private). When unsure, leave it out and ask Hazel.
@@ -35,15 +39,18 @@ Rules for any AI tool (Claude Code, Codex) working on this website. Hazel is not
 ## Files
 
 ```
-index.html            Home
-experience.html       Experience timeline
-projects.html         NE 340L case study + project cards
-about.html            About, skills, education, resume, contact
-assets/css/site.css   All styles; design tokens at the top
-assets/img/           Images and the favicon
-assets/Hazel_Lee_Resume.pdf   (added in M2)
-README.md             What this repo is
-AGENTS.md             This file
+portfolio.html             The hub: five sections (Co-op experience, Academic, Projects, Just for fun, About me)
+assets/css/portfolio.css   Hub styles; design tokens at the top
+assets/js/glass.js         Hub drawing (built; see Constraints)
+index.html                 Old plain Home (replaced by the Fab-to-Atom front door in F2)
+experience.html            Old timeline (deleted in F3)
+projects.html              Old empty shell (deleted in F3)
+about.html                 Old empty shell (deleted in F3)
+assets/css/site.css        Old pages' styles
+assets/img/                Images and the favicon
+assets/Hazel_Lee_Resume.pdf   (added in F3)
+README.md                  What this repo is
+AGENTS.md                  This file
 ```
 
 Each timeline entry and project card is wrapped in `<!-- ENTRY: id -->` … `<!-- /ENTRY -->` so any tool can find and edit it.
@@ -59,10 +66,10 @@ This repo publishes to `https://dlgkwls.github.io/hazel-portfolio/`. **Never pus
 ## Add a project (recipe)
 
 1. Hazel describes the project. If it's an experience, update the Experience DB first.
-2. Copy an existing `<!-- ENTRY -->` card block in `projects.html`.
+2. Copy an existing `<!-- ENTRY -->` card block in the right section of `portfolio.html` (Projects or Just for fun).
 3. Fill in the title, 2 to 3 sentences, the "What I learned" line, links and tags, following the content rules.
 4. Add one image (300 KB or less, with alt text) if there is one.
-5. Check at 380 px wide and in dark mode.
+5. Check at 375 px and 1280 px wide.
 6. Update the resume PDF if the project belongs there.
 7. Commit with a clear message.
 
