@@ -15,6 +15,7 @@
   --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --sans: ui-sans-serif, -apple-system, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
   --hdr: 56px;                   /* header height */
+  --safe-top: env(safe-area-inset-top, 0px); /* phone status bar / notch, 0 elsewhere */
   --glass-w: clamp(360px, 42vw, 640px); /* glass panel width on laptops */
   --strip: 0px;                  /* glass strip height on phones */
   --gutter: clamp(20px, 4vw, 56px);
@@ -45,7 +46,7 @@ html:not(.js) {
 
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--hdr) + var(--strip) + 16px);
+  scroll-padding-top: calc(var(--hdr) + var(--strip) + var(--safe-top) + 16px);
 }
 
 body {
@@ -119,14 +120,14 @@ img {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--hdr);
+  height: calc(var(--hdr) + var(--safe-top));
   z-index: 20;
   background: var(--paper);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 0 var(--gutter);
+  padding: var(--safe-top) var(--gutter) 0;
 }
 
 .hub-header .name {
@@ -248,7 +249,7 @@ img {
 /* Glass panel */
 .glass {
   position: fixed;
-  top: var(--hdr);
+  top: calc(var(--hdr) + var(--safe-top));
   left: 0;
   bottom: 0;
   width: var(--glass-w);
@@ -392,7 +393,7 @@ html:not(.js) .glass {
 /* Main column and footer */
 main {
   margin-left: var(--glass-w);
-  padding: calc(var(--hdr) + var(--strip)) var(--gutter) 0;
+  padding: calc(var(--hdr) + var(--strip) + var(--safe-top)) var(--gutter) 0;
 }
 
 main > section {
@@ -500,7 +501,8 @@ main > section {
 
 @media (max-width: 859px) {
   .hero {
-    min-height: 0;
+    /* Fill the reading area so Co-op starts below the screen, not already playing. */
+    min-height: calc(100vh - var(--hdr) - var(--strip));
     padding: 28px 0 8px;
   }
 }
@@ -547,6 +549,11 @@ main > section {
 /* Sections */
 .sec {
   padding-top: clamp(72px, 14vh, 140px);
+}
+
+/* Room for the last drink step to finish, and for #about to scroll to the top. */
+.sec:last-of-type {
+  min-height: calc(100vh - var(--hdr) - var(--strip));
 }
 
 .sec-eyebrow {

@@ -156,11 +156,13 @@ const Sound = {
 
 // ---------------------------------------------------------------------------
 // Story loop: section positions -> progress, smoothed; render only on change.
-// Each section plays its drink step while its top moves from 90% of the
-// window up to about a third of the reading area, then holds while the
-// visitor reads, so a long section doesn't stretch its animation.
+// Each section plays its drink step while its top moves from 60% to 10% of
+// the reading area (the window below the header, and below the glass strip
+// on phones), then holds while the visitor reads, so a long section doesn't
+// stretch its animation. Starting at 60% means the step and caption change
+// only once the section has really taken over the screen.
 // ---------------------------------------------------------------------------
-const PLAY = { from: 0.9, to: 0.35 };
+const PLAY = { from: 0.6, to: 0.1 };
 const Story = {
   shown: 0, target: 0, boil: 0, lastBoil: 0, dirty: true, idx: -2,
   init(opts) {
@@ -210,7 +212,8 @@ const Story = {
   readScroll() {
     // The reading area starts below the fixed header (and the phone's glass strip).
     const top0 = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-    const from = innerHeight * PLAY.from, to = top0 + (innerHeight - top0) * PLAY.to;
+    const area = innerHeight - top0;
+    const from = top0 + area * PLAY.from, to = top0 + area * PLAY.to;
     let p = 0, idx = -1;
     this.secs.forEach((el, i) => {
       const t = clamp01((from - el.getBoundingClientRect().top) / Math.max(from - to, 1));
@@ -219,12 +222,13 @@ const Story = {
     this.target = p;
     if (idx !== this.idx) this.setStep(idx);
   },
-  // Caption and header highlight follow the section whose drink step is playing.
+  // Caption and header highlight follow the section whose drink step is playing
+  // (the first header link is Home, current while the intro shows).
   // The caption text is copied from the section itself (eyebrow, heading, intro).
   setStep(i) {
     const first = this.idx === -2;
     this.idx = i;
-    this.links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+    this.links.forEach((a, k) => (k === i + 1 ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
     const c = this.cap, sec = this.secs[i];
     const set = () => {
       const intro = sec && sec.querySelector('.sec-intro');
