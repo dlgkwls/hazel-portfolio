@@ -270,6 +270,7 @@ body {
 }
 .endcard .motto { margin: 8px 0 0; font-style: italic; font-size: 17px; }
 .endcard .end-go { margin: 18px 0 0; }
+.endcard { overscroll-behavior: contain; }   /* its list scrolls without moving the tour */
 .endcard a.btn { display: inline-block; padding: 11px 20px; font-size: 15px; }
 .endcard a.btn-primary:hover, .endcard a.btn-primary:focus-visible { color: #050608; background: #7ce9ae; }
 /* Fallback: no JavaScript or no WebGL. Only the first-frame text and buttons, on plain dark. */
@@ -306,7 +307,8 @@ html.nogl :is(#gl, .hud, .labels, .caption, .counter, .progress, .endcard, #trac
   </div>
   <p class="hint">From fab to atom · scroll to enter<i></i></p>
 </div>
-<a class="skip-work" href="portfolio.html">Skip to my work →</a>
+<!-- [DRAFT] skip link (Hazel asked for clearer wording than "Skip to my work") -->
+<a class="skip-work" href="portfolio.html" data-draft>Skip the tour: see my experience →</a>
 
 <aside class="hud" aria-label="Scale readout">
   <div class="hud-row">
@@ -694,7 +696,7 @@ function updateLabels(J, act) {
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 let J = 0, Jv = 0, Jt = 0;
 let navTarget = -1, navTime = 0;
-const OMEGA = REDUCED ? 3.6 : 6.5;
+const OMEGA = REDUCED ? 3.6 : 4.5;
 function sectionH() { return (sections[1].offsetTop - sections[0].offsetTop) || innerHeight; }
 function readScroll() { Jt = clamp(scrollY / sectionH(), 0, JMAX); }
 addEventListener('scroll', readScroll, { passive: true });
@@ -709,7 +711,7 @@ function stepSpring(dt) {
 function goTo(i) {
   i = clamp(i, 0, JMAX);
   navTarget = i; navTime = performance.now();
-  scrollTo({ top: sections[i].offsetTop, behavior: REDUCED ? 'auto' : 'smooth' });
+  scrollTo({ top: sections[i].offsetTop, behavior: 'auto' });
 }
 addEventListener('keydown', e => {
   if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
@@ -1742,7 +1744,7 @@ FAB.update = function (J, W, time) {
   const cy = cam.position.y;
   if (J > 3.2) for (const ly of LENS_Y) dist += Math.exp(-Math.pow((cy - ly) / 0.004, 2));
   FX.distort = dist * (REDUCED ? 0.25 : 0.6);
-  FX.flare = Math.exp(-Math.pow((J - 3.505) / 0.03, 2)) * (REDUCED ? 0.35 : 1.0);
+  FX.flare = Math.exp(-Math.pow((J - 3.505) / 0.03, 2)) * (REDUCED ? 0.04 : 0.1);
   FX.focus = d;
   FX.dof = LOW ? 0 : 0.85 * (1 - sm(2.95, 3.15, J));
 };
@@ -2346,6 +2348,56 @@ ATOM.update = function (J, W, time) {
 for (const L of LABELS) {
   const t = L.el.firstChild && L.el.firstChild.textContent;
   if (t === 'TiN' || t === 'HfO₂ high-k') { L.pos = L.pos.clone(); L.pos.x = 20; L.dx = 70; }
+}
+
+// ---- site ----
+{
+  // Site: one scroll gesture moves exactly one stop, however hard the scroll (Hazel, 2026-09-28).
+  // The stop we're on or heading to (read from the scroll position, not the eased value).
+  const cur = () => (performance.now() - navTime < 1200 && navTarget >= 0) ? navTarget : Math.round(scrollY / sectionH());
+  const step = dir => goTo(cur() + dir);
+  const scrollableCard = target => Boolean(
+    target && target.closest && target.closest('.endcard') &&
+    endcard.scrollHeight > endcard.clientHeight + 1
+  );
+
+  // A gesture is a burst of wheel events with gaps under 220 ms (trackpad momentum is one
+  // continuous stream). Each gesture fires once, on its first real movement.
+  let lastWheel = 0, lockUntil = 0, fired = false;
+  addEventListener('wheel', e => {
+    if (PIN !== null || e.ctrlKey || scrollableCard(e.target)) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now - lastWheel > 220) fired = false;
+    lastWheel = now;
+    if (fired || Math.abs(e.deltaY) < 2 || now < lockUntil) return;
+    fired = true;
+    lockUntil = now + 650;
+    step(Math.sign(e.deltaY));
+  }, { passive: false });
+
+  let y0 = null;
+  let touchInCard = false;
+  addEventListener('touchstart', e => {
+    y0 = e.touches.length === 1 ? e.touches[0].clientY : null;
+    touchInCard = scrollableCard(e.target);
+  }, { passive: true });
+
+  addEventListener('touchmove', e => {
+    if (PIN === null && y0 !== null && !touchInCard) e.preventDefault();
+  }, { passive: false });
+
+  addEventListener('touchend', e => {
+    if (y0 === null || touchInCard) {
+      y0 = null;
+      touchInCard = false;
+      return;
+    }
+    const dy = y0 - e.changedTouches[0].clientY;
+    y0 = null;
+    touchInCard = false;
+    if (Math.abs(dy) > 40) step(Math.sign(dy));
+  }, { passive: true });
 }
 
 // ---------------------------------------------------------------------------
