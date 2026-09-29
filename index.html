@@ -301,7 +301,7 @@ html.nogl :is(#gl, .hud, .labels, .caption, .counter, .progress, .endcard, #trac
   <p class="avail"><span>Open to semiconductor roles starting May–September 2027</span> · <span>Eligible to work in Canada</span> · <span>Open to relocation</span></p>
   <div class="actions">
     <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
-    <a class="btn" href="assets/Hazel_Lee_Resume.pdf">Download my resume</a>
+    <a class="btn" href="assets/Hazel_Lee_Resume.pdf" target="_blank" rel="noopener">Download my resume</a>
     <a class="btn" href="portfolio.html#top">See my work →</a>
   </div>
   <p class="hint">From fab to atom · scroll to enter<i></i></p>
@@ -2358,19 +2358,23 @@ for (const L of LABELS) {
     endcard.scrollHeight > endcard.clientHeight + 1
   );
 
-  // A gesture is a burst of wheel events with gaps under 220 ms (trackpad momentum is one
-  // continuous stream). Each gesture fires once, on its first real movement.
-  let lastWheel = 0, lockUntil = 0, fired = false;
+  // A gesture is a burst of wheel events. A new one starts after a 220 ms pause, or when the
+  // speed jumps up on top of fading trackpad momentum (a fresh flick; momentum only decays).
+  // Each gesture moves one stop; one that arrives mid-glide waits and runs when the glide ends.
+  let lastWheel = 0, lastD = 0, firedAt = 0, lockUntil = 0, fired = false, queued = 0;
+  const fire = (dir) => { lockUntil = performance.now() + 650; step(dir); };
   addEventListener('wheel', e => {
     if (PIN !== null || e.ctrlKey || scrollableCard(e.target)) return;
     e.preventDefault();
-    const now = performance.now();
-    if (now - lastWheel > 220) fired = false;
-    lastWheel = now;
-    if (fired || Math.abs(e.deltaY) < 2 || now < lockUntil) return;
-    fired = true;
-    lockUntil = now + 650;
-    step(Math.sign(e.deltaY));
+    const now = performance.now(), d = Math.abs(e.deltaY);
+    if (now - lastWheel > 220 || (d > lastD * 2 + 6 && now - firedAt > 300)) fired = false;
+    lastWheel = now; lastD = d;
+    if (fired || d < 2) return;
+    fired = true; firedAt = now;
+    const dir = Math.sign(e.deltaY);
+    clearTimeout(queued);
+    if (now >= lockUntil) fire(dir);
+    else queued = setTimeout(() => fire(dir), lockUntil - now);
   }, { passive: false });
 
   let y0 = null;
