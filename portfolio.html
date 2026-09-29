@@ -36,8 +36,7 @@
     </nav>
     <ul class="ext">
       <li><a href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">LinkedIn</a></li>
-      <!-- RESUME: hidden until assets/Hazel_Lee_Resume.pdf is added (F3). Then delete the hidden attribute. -->
-      <li hidden><a href="assets/Hazel_Lee_Resume.pdf">Resume</a></li>
+      <li><a href="assets/Hazel_Lee_Resume.pdf">Resume</a></li>
     </ul>
   </header>
 
@@ -62,6 +61,8 @@
   <main id="main">
     <!-- HERO (PRD §7.1 items 1, 2, 4, 6; PROMPT-Final-Portfolio.md) -->
     <section class="hero" id="top" aria-labelledby="hero-title">
+      <!-- PHOTO (PRD §7.1 item 3): made by ../tools/make-photos.py from ../photos/ -->
+      <div class="hero-photo"><img src="assets/img/hazel.jpg" alt="Hazel in a yellow rain jacket on a mountain trail, smiling, with a turquoise lake and snowy peaks behind her" width="480" height="600"></div>
       <!-- [DRAFT] hero eyebrow -->
       <p class="eyebrow" data-draft>Nanotechnology Engineering · University of Waterloo · 2027</p>
       <h1 id="hero-title">Hazel Lee</h1>
@@ -69,15 +70,9 @@
       <!-- [DRAFT] intro, PRD §7.1 item 2 -->
       <p class="intro" data-draft>Hi, I'm Hazel. I study Nanotechnology Engineering at the University of Waterloo and finish in April 2027. Over four co-ops and a cleanroom lab, I've learned that good results come from careful, repeatable work: I ask before I guess, I write things down, and I finish what I start.</p>
       <p class="availability"><span>Open to semiconductor roles starting May–September 2027</span> · <span>Eligible to work in Canada</span> · <span>Open to relocation</span></p>
-      <!-- PHOTO (PRD §7.1 item 3): hidden until Hazel supplies it (§14 item 5).
-           When it arrives, put inside the div below:
-           <img src="assets/img/hazel.jpg" alt="[describe the photo in a few words]" width="600" height="750">
-           (300 KB or less, GPS data stripped) -->
-      <div class="hero-photo"></div>
       <div class="actions">
         <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
-        <!-- RESUME: hidden until assets/Hazel_Lee_Resume.pdf is added (F3). Then delete the hidden attribute. -->
-        <a class="btn btn-secondary" href="assets/Hazel_Lee_Resume.pdf" hidden>Download my resume</a>
+        <a class="btn btn-secondary" href="assets/Hazel_Lee_Resume.pdf">Download my resume</a>
       </div>
     </section>
 
@@ -240,6 +235,11 @@
           <p class="card-date">May–Aug 2025</p>
           <h3 id="ne340l-h">Building and measuring an MIS capacitor</h3>
           <p class="card-role">NE 340L Microfabrication lab <span class="card-city">· University of Waterloo</span></p>
+          <!-- [DRAFT] photo caption -->
+          <figure class="photo side">
+            <img src="assets/img/ne340l-wafer.jpg" alt="A silicon wafer on a tool stage, patterned with square and round MIS capacitor electrodes and labelled NE340L MIS capacitors" width="720" height="720" loading="lazy">
+            <figcaption data-draft>My group's NE 340L wafer, patterned with MIS capacitors.</figcaption>
+          </figure>
           <h4>The problem</h4>
           <p>Make a simple chip device, a metal–insulator–semiconductor capacitor, from a bare silicon wafer, then check whether the films came out the way we intended.</p>
           <h4>What I did</h4>
@@ -274,7 +274,19 @@
               </table>
             </div>
             <p class="caption">Three methods gave three different answers for the same film. In my report I explained why I trusted the non-contact optical measurement (ellipsometry) for the later calculations.</p>
-            <!-- CHARTS (PRD §7.3): the SiNx and Al DEKTAK step profiles and a bar chart of the four values. Hidden until the chart images are made (F3). Axis labels "Scan position (µm)" and "Height (Å)"; captions say "my group's wafer". -->
+            <!-- CHARTS (PRD §7.3): made by ../tools/make-charts.py from the private DEKTAK exports; only the images are published. [DRAFT] captions -->
+            <figure class="chart">
+              <img src="assets/img/ne340l-thickness.svg" alt="Bar chart. Silicon nitride measured three ways: color chart about 1,125 Å, ellipsometry 1,231.89 Å, DEKTAK 1,849.57 Å. Aluminum by DEKTAK: 13,979.77 Å." width="640" height="250" loading="lazy">
+              <figcaption data-draft>The four thickness values from the table above.</figcaption>
+            </figure>
+            <figure class="chart">
+              <img src="assets/img/ne340l-sinx-profile.svg" alt="Line chart of height across a 1,500 µm scan of the silicon-nitride film: flat plateaus about 1,850 Å high between etched gaps near 0 Å." width="640" height="300" loading="lazy">
+              <figcaption data-draft>Silicon nitride (SiNx) step profile from my group's wafer, measured with a DEKTAK stylus profiler.</figcaption>
+            </figure>
+            <figure class="chart">
+              <img src="assets/img/ne340l-al-profile.svg" alt="Line chart of height across a 1,500 µm scan of the aluminum layer: plateaus about 14,000 Å high between gaps near 0 Å." width="640" height="300" loading="lazy">
+              <figcaption data-draft>Aluminum step profile from my group's wafer, measured with a DEKTAK stylus profiler.</figcaption>
+            </figure>
           </details>
           <p class="tags">PECVD · photolithography · RIE · wet etch · ellipsometry · DEKTAK · MIS capacitor</p>
         </article>
@@ -324,7 +336,9 @@
         <article class="card" id="wearcast" aria-labelledby="wearcast-h">
           <h3 id="wearcast-h">Hazel's Wearcast</h3>
           <p>A pixel-art outfit recommender. Enter a place, date, time and occasion, and a little pixel me gets dressed for the forecast, dress-up-game style. It uses free Open-Meteo weather data.</p>
-          <!-- SCREENSHOT (PRD §7.3): a screenshot of the live app. Hidden until supplied (PRD §10). -->
+          <figure class="photo">
+            <img src="assets/img/wearcast.jpg" alt="Wearcast: the pixel-art Hazel dressed for a mild fall day in Waterloo, with the closet of clothes on the right" width="900" height="703" loading="lazy">
+          </figure>
           <p class="links"><a href="https://dlgkwls.github.io/hazels-wearcast/" target="_blank" rel="noopener">Try it</a> <a href="https://github.com/dlgkwls/hazels-wearcast" target="_blank" rel="noopener">View the code</a> <a href="https://dlgkwls.github.io/hazels-wearcast/journey.html" target="_blank" rel="noopener">How I built it</a></p>
         </article>
         <!-- /ENTRY -->
@@ -333,7 +347,7 @@
           <h3 id="this-site-h">This website</h3>
           <!-- [DRAFT] new card (PROMPT-Final-Portfolio.md) -->
           <p data-draft>The front page zooms from a chip fab down to one silicon atom, and this page fills a glass of matcha lemonade, one step for each part of my work. Both are drawn in code, with no images. I built it with AI coding help.</p>
-          <p class="links"><a href="https://github.com/dlgkwls/hazel-portfolio" target="_blank" rel="noopener">View the code</a></p>
+          <p class="links"><a href="index.html">Take the tour</a> <a href="https://github.com/dlgkwls/hazel-portfolio" target="_blank" rel="noopener">View the code</a></p>
         </article>
         <!-- /ENTRY -->
       </div>
@@ -365,7 +379,24 @@
               <li><strong>Data and web:</strong> Python basics (pandas, Matplotlib), browser tools built with AI assistance.</li>
               <li><strong>Languages:</strong> English, Korean.</li>
             </ul>
-            <!-- OUTSIDE WORK (PRD §7.4 item 5): 3–4 travel photos and one friendly line. Hidden until Hazel adds the countries and photos (§14 items 4, 5). -->
+            <!-- OUTSIDE WORK (PRD §7.4 item 5). Photos made by ../tools/make-photos.py; bystanders and a plate blurred. -->
+            <h4>Outside work</h4>
+            <!-- [DRAFT] outside-work line and captions -->
+            <p data-draft>When I'm not in a lab, I'm usually planning the next trip.</p>
+            <div class="gallery">
+              <figure>
+                <img src="assets/img/travel-mountains.jpg" alt="Hazel sitting on a boulder in an alpine meadow below a rocky ridge" width="720" height="960" loading="lazy">
+                <figcaption data-draft>Hiking in the mountains</figcaption>
+              </figure>
+              <figure>
+                <img src="assets/img/travel-copenhagen.jpg" alt="Hazel standing by the Nyhavn canal in Copenhagen, with colourful townhouses and a red boat behind her" width="720" height="960" loading="lazy">
+                <figcaption data-draft>Nyhavn, Copenhagen</figcaption>
+              </figure>
+              <figure>
+                <img src="assets/img/travel-cappadocia.jpg" alt="Hazel looking up at dozens of hot-air balloons over the rock valleys of Cappadocia" width="720" height="960" loading="lazy">
+                <figcaption data-draft>Cappadocia, Türkiye</figcaption>
+              </figure>
+            </div>
           </details>
         </article>
         <!-- /ENTRY -->
@@ -374,8 +405,7 @@
           <h3 id="contact-h">Resume and contact</h3>
           <div class="actions">
             <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
-            <!-- RESUME (PRD §7.4 item 6): hidden until assets/Hazel_Lee_Resume.pdf is added (F3). Then delete the hidden attribute. -->
-            <a class="btn btn-secondary" href="assets/Hazel_Lee_Resume.pdf" hidden>Download my resume (PDF)</a>
+            <a class="btn btn-secondary" href="assets/Hazel_Lee_Resume.pdf">Download my resume (PDF)</a>
           </div>
           <ul class="contact">
             <li>Email (personal): <a href="mailto:yihajin0916@gmail.com">yihajin0916@gmail.com</a></li>

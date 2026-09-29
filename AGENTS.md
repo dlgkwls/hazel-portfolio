@@ -11,7 +11,7 @@ Rules for any AI tool (Claude Code, Codex) working on this website. Hazel is not
 
 ## Constraints
 
-The site is becoming two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `portfolio.html`, the Matcha Lemonade hub (built in F1), and `index.html`, the Fab-to-Atom front door (F2). The old plain pages stay until F3 moves every link to the new pages and deletes them.
+The site is two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `index.html`, the Fab-to-Atom front door, and `portfolio.html`, the Matcha Lemonade hub. The old plain pages were removed in F3 (Git keeps them).
 
 - Static files only: no frameworks, no server. It must work when a page is opened by double-clicking, and on GitHub Pages. Use relative links.
 - JavaScript draws the pictures only: Canvas 2D on `portfolio.html`, WebGL on `index.html`. Every word is real HTML text, never drawn on the canvas, and the page reads in full with JavaScript off.
@@ -24,7 +24,7 @@ The site is becoming two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `p
 - Fast: each page under about 1 MB; each image 300 KB or less (WebP or JPEG).
 - Accessible: semantic headings, alt text on every image, visible keyboard focus, `prefers-reduced-motion` respected (the drink appears step by step without pouring).
 - Every page has a title ("Hazel Lee", "Hazel Lee · Portfolio"), a meta description and an Open Graph image (added in F2).
-- Hub design tokens live at the top of `assets/css/portfolio.css`; the old pages use `assets/css/site.css`. Change colors there, nowhere else.
+- Hub design tokens live at the top of `assets/css/portfolio.css`; the front door's are at the top of its `<style>` (source: `../Fab-to-Atom/src/01-head.html` and `variants/site/style.css`). Change colors there, nowhere else.
 
 ## Content rules
 
@@ -44,13 +44,9 @@ portfolio.html             The hub: five sections (Co-op experience, Academic, P
 assets/css/portfolio.css   Hub styles; design tokens at the top
 assets/js/glass.js         Hub drawing (built; see Constraints)
 index.html                 Front door: Fab-to-Atom 3D tour (built; see Constraints)
-experience.html            Old timeline (deleted in F3)
-projects.html              Old empty shell (deleted in F3)
-about.html                 Old empty shell (deleted in F3)
-assets/css/site.css        Old pages' styles
 assets/img/                Images and the favicon
 assets/img/og-fab.jpg      Sharing image: a still of stop 1
-assets/Hazel_Lee_Resume.pdf   (added in F3)
+assets/Hazel_Lee_Resume.pdf   One-page resume (built from ../resume/Hazel_Lee_Resume.md)
 README.md                  What this repo is
 AGENTS.md                  This file
 ```
@@ -72,7 +68,7 @@ This repo publishes to `https://dlgkwls.github.io/hazel-portfolio/`. **Never pus
 3. Fill in the title, 2 to 3 sentences, the "What I learned" line, links and tags, following the content rules.
 4. Add one image (300 KB or less, with alt text) if there is one.
 5. Check at 375 px and 1280 px wide.
-6. Update the resume PDF if the project belongs there.
+6. If the project belongs on the resume, edit `../resume/Hazel_Lee_Resume.md` and rebuild the PDF (steps in `../resume/AGENTS.md`).
 7. Commit with a clear message.
 
 ## After each milestone

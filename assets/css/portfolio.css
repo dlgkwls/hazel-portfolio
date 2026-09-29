@@ -487,9 +487,13 @@ main > section {
 }
 
 .hero-photo img {
+  width: 150px;
   border-radius: var(--radius);
-  margin-top: 24px;
-  max-width: 320px;
+  margin: 0 0 22px;
+}
+
+@media (max-width: 859px) {
+  .hero-photo img { width: 120px; margin-bottom: 16px; }
 }
 
 .actions {
@@ -714,6 +718,54 @@ html.js .sec-intro {
 
 .card .actions {
   margin-top: 12px;
+}
+
+/* Figures: photos, charts and the travel gallery */
+.card figure {
+  margin: 14px 0 12px;
+}
+
+.card figure img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.card figure.photo img {
+  border: 1px solid var(--line);
+}
+
+/* A photo beside the text on wider screens (the NE 340L wafer). */
+.card figure.side {
+  max-width: 320px;
+}
+
+@media (min-width: 600px) {
+  .card figure.side { float: right; width: 42%; margin: 4px 0 12px 20px; }
+  .card figure.side ~ .learned, .card figure.side ~ details { clear: both; }
+}
+
+.card figure.chart img {
+  background: var(--card);
+}
+
+.card figcaption {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.gallery figure {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Details */
