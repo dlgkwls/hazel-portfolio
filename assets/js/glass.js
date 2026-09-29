@@ -190,6 +190,9 @@ const Story = {
     const snap = () => { this.readScroll(); this.shown = this.target; this.dirty = true; };
     addEventListener('load', snap); addEventListener('hashchange', snap);
     if (document.fonts) document.fonts.ready.then(snap);
+    // Arriving without a deep link always starts at the intro, never at a restored scroll spot.
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (!location.hash) { scrollTo(0, 0); addEventListener('load', () => { if (!location.hash) scrollTo(0, 0); }); }
     this.readScroll(); this.shown = this.target;
     let last = performance.now();
     const loop = (now) => {
