@@ -15,6 +15,7 @@ The site is becoming two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `p
 
 - Static files only: no frameworks, no server. It must work when a page is opened by double-clicking, and on GitHub Pages. Use relative links.
 - JavaScript draws the pictures only: Canvas 2D on `portfolio.html`, WebGL on `index.html`. Every word is real HTML text, never drawn on the canvas, and the page reads in full with JavaScript off.
+- `index.html` is built by `../Fab-to-Atom/src/build.sh site`. Edit its words in `../Fab-to-Atom/src/variants/site/` and rebuild; never edit `index.html` by hand.
 - `assets/js/glass.js` is built from `../Matcha Lemonade/source/illustration/` by its `build.sh`. Edit the source parts there and rebuild; never edit `glass.js` by hand. The page's words live in `portfolio.html` itself.
 - "Read more" and "More detail" use the built-in `<details>` / `<summary>` element, so they work without JavaScript and with a keyboard and screen reader.
 - The hub is always cream and the front door always dark (no light/dark switching). Text meets WCAG AA; put a solid paper panel behind any text that sits over the drawing.
@@ -42,12 +43,13 @@ The site is becoming two motion pages (plan: `../PROMPT-Final-Portfolio.md`): `p
 portfolio.html             The hub: five sections (Co-op experience, Academic, Projects, Just for fun, About me)
 assets/css/portfolio.css   Hub styles; design tokens at the top
 assets/js/glass.js         Hub drawing (built; see Constraints)
-index.html                 Old plain Home (replaced by the Fab-to-Atom front door in F2)
+index.html                 Front door: Fab-to-Atom 3D tour (built; see Constraints)
 experience.html            Old timeline (deleted in F3)
 projects.html              Old empty shell (deleted in F3)
 about.html                 Old empty shell (deleted in F3)
 assets/css/site.css        Old pages' styles
 assets/img/                Images and the favicon
+assets/img/og-fab.jpg      Sharing image: a still of stop 1
 assets/Hazel_Lee_Resume.pdf   (added in F3)
 README.md                  What this repo is
 AGENTS.md                  This file

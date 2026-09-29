@@ -1,103 +1,2495 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hazel Lee · Home</title>
-  <meta name="description" content="Hazel Lee studies Nanotechnology Engineering at the University of Waterloo and is open to semiconductor roles starting May–September 2027.">
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f1522" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css">
-  <!-- M3: Open Graph tags (FR-11) and GoatCounter (FR-12) go here. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hazel Lee</title>
+<meta name="description" content="Hazel Lee studies Nanotechnology Engineering at the University of Waterloo and is open to semiconductor roles starting May–September 2027.">
+<meta name="theme-color" content="#050608">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hazel Lee">
+<meta property="og:description" content="Nanotechnology Engineering, University of Waterloo. A scroll from a chip fab down to one silicon atom, then my work.">
+<meta property="og:image" content="https://dlgkwls.github.io/hazel-portfolio/assets/img/og-fab.jpg">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<!-- Marks that JavaScript runs. Without it (or without WebGL) only the first-frame text shows. -->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050608;
+  --fg: #e8ebee;
+  --muted: #a2abb4;
+  --dim: #69727c;
+  --accent: #3ddc84;
+  --hair: rgba(232, 235, 238, 0.2);
+  --gutter: clamp(16px, 3.2vw, 48px);
+  --font: var(--vfont), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+* { box-sizing: border-box; }
+html { scroll-snap-type: y proximity; background: var(--bg); }
+html, body { margin: 0; padding: 0; }
+body {
+  color: var(--fg); background: var(--bg); font-family: var(--font);
+  overflow-x: hidden; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+#gl { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100lvh; display: block; z-index: 0; }
+#track { position: relative; z-index: 1; pointer-events: none; }
+.stop { height: 100vh; height: 100svh; scroll-snap-align: start; }
+.stop:last-child { scroll-snap-align: end; }
+
+/* Opening title */
+.opening {
+  position: fixed; inset: 0; z-index: 3; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; pointer-events: none;
+  padding: 0 var(--gutter); transition: opacity 900ms var(--ease), transform 900ms var(--ease);
+}
+.opening.gone { opacity: 0; transform: translateY(-18px); }
+.opening h1 {
+  margin: 0; font-weight: 300; letter-spacing: 0.16em; line-height: 1.05;
+  font-size: clamp(34px, 7.4vw, 118px); text-shadow: 0 2px 40px rgba(0,0,0,.7);
+}
+.opening h1 b { font-weight: 600; }
+.opening .tag {
+  margin: 18px 0 0; color: var(--muted); letter-spacing: 0.22em; text-transform: uppercase;
+  font-size: clamp(11px, 1.1vw, 14px);
+}
+.opening .hint {
+  margin: clamp(36px, 7vh, 80px) 0 0; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--fg); opacity: .8; display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.opening .hint i {
+  display: block; width: 1px; height: 38px; background: linear-gradient(var(--fg), transparent);
+  animation: drip 2.2s var(--ease) infinite;
+}
+@keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+/* HUD */
+.hud {
+  position: fixed; top: var(--gutter); right: var(--gutter); z-index: 4; pointer-events: none;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 14px;
+  text-shadow: 0 1px 10px rgba(0,0,0,.6);
+}
+.hud-row { display: flex; align-items: flex-start; gap: 18px; }
+.fov { text-align: right; padding-top: 2px; }
+.fov .lbl { font-size: 10.5px; letter-spacing: 0.24em; color: var(--muted); }
+.fov .val {
+  font-size: clamp(22px, 2.3vw, 32px); font-weight: 500; letter-spacing: 0.01em; margin-top: 4px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+  font-size: 10.5px; letter-spacing: 0.2em; font-weight: 500; padding: 6px 10px 5px;
+  border: 1px solid var(--hair); border-radius: 2px; background: rgba(5,6,8,.35); white-space: nowrap;
+}
+.badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.badge.swap { animation: badgeSwap 500ms var(--ease); }
+@keyframes badgeSwap { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.ruler { position: relative; width: 66px; height: 236px; }
+.ruler .axis { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--hair); }
+.ruler .tick { position: absolute; left: 0; height: 1px; background: rgba(232,235,238,.38); width: 5px; }
+.ruler .tick.major { width: 10px; background: rgba(232,235,238,.7); }
+.ruler .tl { position: absolute; left: 15px; transform: translateY(-50%); font-size: 9.5px; color: var(--dim); letter-spacing: .04em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ruler .stopdot { position: absolute; left: -3px; width: 3px; height: 3px; border-radius: 50%; background: rgba(232,235,238,.35); }
+.ruler .marker { position: absolute; left: -9px; top: 0; width: 22px; height: 0; will-change: transform; }
+.ruler .marker::before { content: ''; position: absolute; left: 0; top: -4px; border: 4px solid transparent; border-left: 6px solid var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+.ruler .marker::after { content: ''; position: absolute; left: 8px; top: 0; width: 14px; height: 1px; background: var(--accent); }
+
+/* Captions */
+.caption {
+  position: fixed; left: var(--gutter); bottom: var(--gutter); z-index: 4;
+  width: min(640px, calc(100vw - 2 * var(--gutter)));
+  text-shadow: 0 1px 14px rgba(0,0,0,.75); pointer-events: auto;
+}
+.caption::before {
+  content: ''; position: absolute; left: calc(-1 * var(--gutter)); bottom: calc(-1 * var(--gutter));
+  width: calc(100% + 2 * var(--gutter) + 120px); height: calc(100% + 2 * var(--gutter) + 80px);
+  background: radial-gradient(ellipse at 0% 100%, rgba(3,4,6,.72), rgba(3,4,6,0) 70%);
+  z-index: -1; pointer-events: none;
+}
+.cap-inner { transition: opacity 380ms var(--ease), transform 380ms var(--ease); }
+.cap-inner.out { opacity: 0; transform: translateY(10px); }
+.cap-line { width: 40px; height: 2px; background: var(--accent); margin-bottom: 18px; box-shadow: 0 0 10px rgba(61,220,132,.5); }
+.caption h2 {
+  margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; line-height: 0.98;
+  font-size: clamp(30px, 4.4vw, 66px);
+}
+.caption .sub { margin: 14px 0 0; color: var(--muted); font-size: clamp(14px, 1.2vw, 17px); line-height: 1.45; max-width: 62ch; }
+.caption .fact { margin: 10px 0 0; color: rgba(232,235,238,.86); font-size: clamp(13px, 1vw, 14.5px); line-height: 1.45; }
+.caption .fact .k { color: var(--accent); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; margin-right: 10px; font-weight: 600; }
+
+/* In-scene callouts */
+.labels { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+.labels svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.labels line { stroke: rgba(232,235,238,.55); stroke-width: 1; }
+.labels circle { fill: var(--fg); }
+.labels .lab {
+  position: absolute; left: 0; top: 0; font-size: 12px; letter-spacing: .06em; white-space: nowrap;
+  color: var(--fg); text-shadow: 0 1px 6px rgba(0,0,0,.9); will-change: transform, opacity;
+  background: rgba(6, 8, 10, .62); padding: 4px 8px 5px; border-radius: 2px; border-left: 1px solid rgba(232,235,238,.35);
+}
+.labels .lab.acc { border-left-color: var(--accent); }
+.labels .lab small { display: block; color: var(--muted); font-size: 10.5px; letter-spacing: .04em; margin-top: 1px; }
+.labels .lab.acc { color: #bff5d6; }
+
+/* End card */
+.endcard {
+  position: fixed; z-index: 5; right: var(--gutter); bottom: var(--gutter); width: min(400px, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100vh - 2 * var(--gutter) - 230px); overflow-y: auto;
+  transform: translateY(14px); opacity: 0; visibility: hidden;
+  transition: opacity 900ms var(--ease), transform 900ms var(--ease), visibility 0s linear 900ms;
+  background: rgba(6, 8, 10, .66); border: 1px solid var(--hair); border-radius: 3px;
+  padding: 28px 28px 22px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.endcard.show { opacity: 1; visibility: visible; transform: none; transition: opacity 900ms var(--ease), transform 900ms var(--ease), visibility 0s; }
+.endcard .kick { font-size: 11px; letter-spacing: .3em; color: var(--accent); font-weight: 600; margin: 0; }
+.endcard h2 { margin: 12px 0 0; font-size: clamp(24px, 2.3vw, 32px); font-weight: 600; letter-spacing: .02em; }
+.endcard .prog { margin: 6px 0 0; color: var(--muted); font-size: 14.5px; line-height: 1.4; }
+.endcard ol { list-style: none; margin: 22px 0 0; padding: 16px 0 0; border-top: 1px solid var(--hair); }
+.endcard li { margin: 0; }
+.endcard a {
+  display: flex; align-items: baseline; gap: 10px; padding: 5px 0; color: var(--fg); text-decoration: none;
+  font-size: 14px; line-height: 1.3; border-radius: 2px;
+}
+.endcard a .n { color: var(--dim); font-size: 11px; width: 18px; font-variant-numeric: tabular-nums; }
+.endcard a .dot { color: var(--dim); }
+.endcard a .s { color: var(--muted); font-variant-numeric: tabular-nums; }
+.endcard a:hover, .endcard a:focus-visible { color: var(--accent); outline: none; }
+.endcard a:hover .s, .endcard a:focus-visible .s { color: var(--accent); }
+.endcard a:focus-visible { box-shadow: 0 0 0 1px var(--accent); }
+
+@media (min-width: 980px) {
+  .endcard { width: min(600px, calc(100vw - 2 * var(--gutter))); }
+  .endcard ol { columns: 2; column-gap: 28px; }
+  .endcard li { break-inside: avoid; }
+}
+.noscript { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; z-index: 9; background: var(--bg); color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .hud { gap: 10px; }
+  .hud-row { gap: 10px; }
+  .fov .lbl { font-size: 9px; }
+  .fov .val { font-size: 20px; }
+  .badge { font-size: 9px; padding: 5px 8px 4px; margin-top: 8px; }
+  .ruler { height: 150px; width: 52px; }
+  .ruler .tl { font-size: 8.5px; left: 13px; }
+  .caption h2 { font-size: clamp(26px, 8.4vw, 40px); }
+  .cap-line { margin-bottom: 12px; }
+  .caption .sub { font-size: 14px; }
+  .caption .fact { font-size: 12.5px; }
+  .labels .lab { font-size: 10.5px; }
+  .labels .lab small { font-size: 9.5px; }
+  .endcard { padding: 20px 18px 14px; max-height: calc(100svh - 2 * var(--gutter)); }
+  .endcard.show { transform: none; }
+  .endcard ol { columns: 1; margin-top: 14px; padding-top: 10px; }
+  .endcard a { padding: 4px 0; font-size: 13px; }
+  body.ended .caption { opacity: 0; transition: opacity 500ms; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .ruler { height: 120px; }
+  .caption h2 { font-size: 28px; }
+  .endcard { padding: 16px 18px 10px; }
+  .endcard ol { columns: 2; column-gap: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .opening .hint i { animation: none; }
+  .cap-inner, .opening, .endcard { transition-duration: 200ms !important; }
+}
+:root { --vfont: 'Barlow Semi Condensed'; --gutter: clamp(16px, 3.6vw, 56px); }
+.opening h1 { font-weight: 600; letter-spacing: 0.04em; font-size: clamp(44px, 10vw, 168px); line-height: 0.92; }
+.opening h1 b { font-weight: 700; }
+.opening .tag { letter-spacing: 0.3em; }
+.caption { width: min(820px, calc(100vw - 2 * var(--gutter) - 28px)); left: calc(var(--gutter) + 28px); }
+.caption h2 { font-size: clamp(40px, 7.2vw, 118px); font-weight: 700; letter-spacing: 0; line-height: 0.9; }
+.caption .sub { font-size: clamp(15px, 1.35vw, 19px); }
+.cap-line { width: 64px; height: 3px; }
+.cap-inner { transition: opacity 420ms var(--ease), transform 520ms var(--ease); }
+.cap-inner.out { transform: translateY(26px); }
+.cap-inner.out[data-dir="up"] { transform: translateY(-26px); }
+.counter { position: fixed; left: calc(var(--gutter) + 28px); top: var(--gutter); z-index: 4; pointer-events: none; display: flex; align-items: baseline; gap: 10px; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.counter b { font-size: clamp(34px, 4.2vw, 64px); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+.counter span { color: var(--muted); font-size: clamp(14px, 1.3vw, 18px); letter-spacing: 0.1em; }
+.progress { position: fixed; left: var(--gutter); top: var(--gutter); bottom: var(--gutter); width: 2px; z-index: 4; pointer-events: none; background: rgba(232,235,238,.14); }
+.progress i { position: absolute; left: 0; top: 0; width: 2px; height: 0; background: var(--accent); box-shadow: 0 0 10px rgba(61,220,132,.6); }
+.progress .t { position: absolute; left: -3px; width: 8px; height: 1px; background: rgba(232,235,238,.45); }
+.hud { gap: 10px; }
+.ruler { height: 180px; }
+.fov .val { font-size: clamp(20px, 2vw, 28px); }
+.labels .lab { font-size: 12.5px; }
+@media (max-width: 720px) {
+  .caption { left: calc(var(--gutter) + 18px); width: calc(100vw - 2 * var(--gutter) - 18px); }
+  .counter { left: calc(var(--gutter) + 18px); }
+  .caption h2 { font-size: clamp(34px, 11vw, 52px); }
+}
+
+/* ---- Front door (site build): identity first frame, skip link, end card button, fallback ---- */
+.opening { justify-content: flex-start; padding-top: clamp(84px, 17vh, 190px); }
+.opening h1 { font-size: clamp(56px, 9vw, 150px); font-weight: 700; letter-spacing: 0.01em; line-height: 0.9; }
+.opening .who { margin: 14px 0 0; font-size: clamp(16px, 1.6vw, 22px); letter-spacing: 0.04em; }
+.opening .motto { margin: 8px 0 0; font-style: italic; font-size: clamp(18px, 1.9vw, 26px); }
+.opening .avail { margin: 14px 0 0; font-size: clamp(14px, 1.1vw, 16px); color: rgba(232,235,238,.86); max-width: 64ch; line-height: 1.5; }
+/* Soft dark backdrop so the small lines stay readable over the lit fab. */
+.opening::before {
+  content: ''; position: absolute; left: 50%; top: 0; width: min(1200px, 140vw); height: 80%; transform: translateX(-50%); z-index: -1;
+  background: radial-gradient(ellipse at 50% 42%, rgba(3,4,6,.68), rgba(3,4,6,.35) 45%, rgba(3,4,6,0) 70%);
+}
+.opening .avail span { white-space: nowrap; }
+.opening .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; pointer-events: auto; }
+.opening .hint { margin-top: clamp(22px, 4vh, 44px); font-size: 11px; }
+.opening p, .opening h1 { text-shadow: 0 2px 24px rgba(0,0,0,.85); }
+.opening.gone { visibility: hidden; transition: opacity 900ms var(--ease), transform 900ms var(--ease), visibility 0s linear 900ms; }
+.btn {
+  display: inline-block; padding: 11px 20px; border-radius: 2px; font: 600 15px/1.2 var(--font); letter-spacing: 0.03em;
+  color: var(--fg); background: rgba(5,6,8,.45); border: 1px solid rgba(232,235,238,.45); text-decoration: none;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.btn:hover { border-color: var(--fg); }
+.btn-primary, .endcard a.btn-primary { color: #050608; background: var(--accent); border-color: var(--accent); }
+.btn-primary:hover { background: #7ce9ae; }
+.btn:focus-visible, .skip-work:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.skip-work {
+  position: fixed; top: var(--gutter); right: var(--gutter); z-index: 6; font-size: 13px; letter-spacing: 0.06em;
+  color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--accent); padding: 2px 0; text-shadow: 0 1px 10px rgba(0,0,0,.8);
+}
+.hud { top: calc(var(--gutter) + 36px + var(--safe-t)); }
+/* Keep top and bottom controls clear of a phone's status bar and home indicator (0 elsewhere). */
+:root { --safe-t: env(safe-area-inset-top, 0px); --safe-b: env(safe-area-inset-bottom, 0px); }
+.skip-work, .counter { top: calc(var(--gutter) + var(--safe-t)); }
+.progress { top: calc(var(--gutter) + var(--safe-t)); bottom: calc(var(--gutter) + var(--safe-b)); }
+.caption, .endcard { bottom: calc(var(--gutter) + var(--safe-b)); }
+/* At stop 12 the end card takes the right side: shrink the caption so the two never overlap
+   (phones hide the caption instead, as in the prototype). */
+@media (min-width: 721px) {
+  .caption h2 { transition: font-size 700ms var(--ease); }
+  body.ended .caption { width: min(520px, calc(100vw - 2 * var(--gutter) - 640px)); }
+  body.ended .caption h2 { font-size: clamp(30px, 3.6vw, 54px); }
+}
+.endcard .motto { margin: 8px 0 0; font-style: italic; font-size: 17px; }
+.endcard .end-go { margin: 18px 0 0; }
+.endcard a.btn { display: inline-block; padding: 11px 20px; font-size: 15px; }
+.endcard a.btn-primary:hover, .endcard a.btn-primary:focus-visible { color: #050608; background: #7ce9ae; }
+/* Fallback: no JavaScript or no WebGL. Only the first-frame text and buttons, on plain dark. */
+html:not(.js) :is(#gl, .hud, .labels, .caption, .counter, .progress, .endcard, #track, .opening .hint),
+html.nogl :is(#gl, .hud, .labels, .caption, .counter, .progress, .endcard, #track, .opening .hint) { display: none; }
+/* DRAFT markers: visible while Hazel reviews copy. Nothing may carry data-draft at launch. */
+[data-draft] { outline: 1px dashed #c7832a; outline-offset: 4px; }
+[data-draft]::after { content: "DRAFT"; display: inline-block; margin-left: 8px; font: 600 0.65rem/1.6 var(--font); letter-spacing: 0.08em; color: #fff; background: #c7832a; border-radius: 3px; padding: 0 5px; vertical-align: middle; }
+@media (max-width: 720px) {
+  .opening { padding-top: calc(var(--gutter) + 64px + var(--safe-t)); }
+  .opening .avail span { white-space: normal; }
+  .skip-work { font-size: 12px; }
+  /* No room for the scale readout beside the name: it fades in once the tour starts. */
+  .hud { transition: opacity 600ms var(--ease); }
+  body:has(.opening:not(.gone)) .hud { opacity: 0; }
+}
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- HEADER: same on every page; mark the current page with aria-current="page" -->
-  <header class="site-header">
-    <div class="wrap">
-      <a class="site-name" href="index.html">Hazel Lee</a>
-      <nav class="site-nav" aria-label="Main">
-        <ul>
-        <li><a href="index.html" aria-current="page">Home</a></li>
-        <li><a href="experience.html">Experience</a></li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="about.html">About</a></li>
-        </ul>
-      </nav>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<!-- FIRST FRAME (PROMPT-Final-Portfolio.md): who Hazel is, shown before any scroll and before the 3D scene loads. -->
+<div class="opening" id="opening">
+  <h1>Hazel Lee</h1>
+  <p class="who">Nanotechnology Engineering, University of Waterloo</p>
+  <p class="motto">Details make it repeatable.</p>
+  <p class="avail"><span>Open to semiconductor roles starting May–September 2027</span> · <span>Eligible to work in Canada</span> · <span>Open to relocation</span></p>
+  <div class="actions">
+    <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
+    <!-- RESUME: hidden until assets/Hazel_Lee_Resume.pdf is added (F3). Then delete the hidden attribute. -->
+    <a class="btn" href="assets/Hazel_Lee_Resume.pdf" hidden>Download my resume</a>
+    <a class="btn" href="portfolio.html">See my work →</a>
+  </div>
+  <p class="hint">From fab to atom · scroll to enter<i></i></p>
+</div>
+<a class="skip-work" href="portfolio.html">Skip to my work →</a>
+
+<aside class="hud" aria-label="Scale readout">
+  <div class="hud-row">
+    <div class="fov">
+      <div class="lbl">FIELD OF VIEW</div>
+      <div class="val" id="fovVal">30.0 m</div>
+      <div class="badge" id="badge">CAMERA</div>
     </div>
-  </header>
+    <div class="ruler" id="ruler" aria-hidden="true"><div class="axis"></div><div class="marker" id="marker"></div></div>
+  </div>
+</aside>
 
-  <main id="main">
-    <div class="wrap">
+<div class="labels" id="labels" aria-hidden="true"><svg id="leaders"></svg></div>
 
-      <!-- HERO (PRD §7.1 items 1-4, 6) -->
-      <section class="hero" aria-labelledby="hero-title">
-        <div>
-          <h1 id="hero-title">Details make it repeatable.</h1>
-          <!-- [DRAFT] intro, PRD §7.1 item 2 -->
-          <p class="intro" data-draft>Hi, I'm Hazel. I study Nanotechnology Engineering at the University of Waterloo and finish in April 2027. Over four co-ops and a cleanroom lab, I've learned that good results come from careful, repeatable work: I ask before I guess, I write things down, and I finish what I start.</p>
-          <p class="availability"><span>Open to semiconductor roles starting May–September 2027</span> · <span>Eligible to work in Canada</span> · <span>Open to relocation</span></p>
-          <div class="actions">
-            <a class="btn btn-primary" href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">Message me on LinkedIn</a>
-            <a class="btn btn-secondary" href="experience.html">See my experience</a>
-          </div>
-        </div>
-        <!-- PHOTO (PRD §7.1 item 3): hidden until Hazel supplies it (§14 item 5).
-             When it arrives: add class "has-photo" to the section above, then put inside the div below:
-             <img src="assets/img/hazel.jpg" alt="[describe the photo in a few words]" width="600" height="750">
-             (300 KB or less, GPS data stripped, alt text describing the photo) -->
-        <div class="hero-photo"></div>
-      </section>
+<section class="caption" id="caption" aria-live="polite" aria-atomic="true">
+  <div class="cap-inner" id="capInner">
+    <div class="cap-line"></div>
+    <h2 id="capTitle">THE FAB</h2>
+    <p class="sub" id="capSub"></p>
+    <p class="fact" id="capFact"></p>
+  </div>
+</section>
 
-      <!-- HIGHLIGHTS (PRD §7.1 item 5) -->
-      <section class="highlights" aria-labelledby="highlights-title">
-        <h2 class="section-label" id="highlights-title">Highlights</h2>
-        <ul class="cards">
-          <!-- ENTRY: highlight-cleanroom -->
-          <li>
-            <a class="card" href="projects.html#ne340l">
-              <h3>Cleanroom chip lab</h3>
-              <p>Built MIS capacitors with my lab group: PECVD, photolithography and etching.</p>
-              <span class="more-link">See the project</span>
-            </a>
-          </li>
-          <!-- /ENTRY -->
-          <!-- ENTRY: highlight-helicopter -->
-          <li>
-            <a class="card" href="experience.html#fortisbc">
-              <h3>Helicopter field test</h3>
-              <p>Helped test three fixes for woodpecker damage on transmission poles, by helicopter.</p>
-              <span class="more-link">See FortisBC</span>
-            </a>
-          </li>
-          <!-- /ENTRY -->
-          <!-- ENTRY: highlight-solar -->
-          <li>
-            <a class="card" href="experience.html#sundensity">
-              <h3>Flexible solar cells</h3>
-              <p>Prepared the substrates a solar-cell company built its flexible cells on.</p>
-              <span class="more-link">See SunDensity</span>
-            </a>
-          </li>
-          <!-- /ENTRY -->
-        </ul>
-      </section>
+<nav class="endcard" id="endcard" aria-label="Journey end" inert>
+  <p class="kick">FROM FAB TO ATOM</p>
+  <h2>Hazel Lee</h2>
+  <p class="prog">Nanotechnology Engineering, University of Waterloo</p>
+  <p class="motto">Details make it repeatable.</p>
+  <!-- [DRAFT] end-card button -->
+  <p class="end-go"><a class="btn btn-primary" href="portfolio.html" data-draft>Now see my work →</a></p>
+  <ol id="endList"></ol>
+</nav>
 
-    </div>
-  </main>
+<div class="counter" id="counter" aria-hidden="true"><b id="cNum">01</b><span>/ 12</span></div>
+<div class="progress" id="progress" aria-hidden="true"><i id="pFill"></i><div id="pTicks"></div></div>
+<main id="track"></main>
 
-  <!-- FOOTER: same on every page -->
-  <footer class="site-footer">
-    <div class="wrap">
-      <ul>
-        <li><a href="https://www.linkedin.com/in/20-hazel-lee/" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="mailto:yihajin0916@gmail.com">yihajin0916@gmail.com</a></li>
-      </ul>
-      <p>© 2026 Hazel Lee</p>
-    </div>
-  </footer>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+
+// Variant configuration (defaults = variant A)
+const CFG = Object.assign({ dprCap: 1.5, msaa: 2, sway: 1, normalsAll: false, semMix: 1, stemMix: 1, outline: 0, motionBlur: 0 }, { sway: 1.8, motionBlur: 0.022 });
+const FRAME_HOOKS = [];
+
+// ---------------------------------------------------------------------------
+// Stops (numbers verified in stop-table.md)
+// ---------------------------------------------------------------------------
+const STOPS = [
+  { id: 'fab', title: 'THE FAB', w: 30, name: 'The fab', scale: '30 m',
+    sub: 'Filtered air flows down from the ceiling and out through the perforated floor.',
+    fact: 'Wafers never touch this air: they travel sealed in FOUPs, 25 at a time.' },
+  { id: 'overhead-transport', title: 'OVERHEAD TRANSPORT', w: 4, name: 'Overhead transport', scale: '4 m',
+    sub: 'An overhead hoist lifts a FOUP from its shelf and carries it along the ceiling rail.',
+    fact: 'A leading-edge wafer goes through 1,000+ process steps over about 3 months.' },
+  { id: 'inspection-tool', title: 'INSPECTION TOOL', w: 1, name: 'Inspection tool', scale: '1 m',
+    sub: 'The FOUP docks at a load port and a robot slides one wafer onto the microscope stage. Generic tool layout.',
+    fact: 'Each wafer is 300 mm across (dinner-plate size) and weighs about 128 g.' },
+  { id: 'wafer', title: 'ONE 300 MM WAFER', w: 0.35, name: 'One 300 mm wafer', scale: '35 cm',
+    sub: 'Hundreds of chips patterned side by side; the notch marks the crystal orientation.',
+    fact: '775 µm thick, about as thick as a credit card (0.76 mm).' },
+  { id: 'die-grid', title: 'THE DIE GRID', w: 0.04, name: 'The die grid', scale: '40 mm',
+    sub: 'Identical dies separated by scribe lines; one exposure field (max 26 × 33 mm) outlined. Illustrative layout.',
+    fact: 'Each die is roughly fingernail-sized, about 10 mm across.' },
+  { id: 'interconnect', title: 'INTERCONNECT STACK', w: 50e-6, name: 'Interconnect stack', scale: '50 µm',
+    sub: 'Thick top-level copper wires on one die. Dielectric removed for clarity; generic layout.',
+    fact: 'This whole view is narrower than a human hair (~80 µm).' },
+  { id: 'down-the-stack', title: 'DOWN THE STACK', w: 5e-6, name: 'Down the stack', scale: '5 µm',
+    sub: '15+ metal layers joined by vias, getting finer toward the transistors: down to ~20–30 nm pitch.',
+    fact: 'A red blood cell (~7 µm) is wider than this entire view.' },
+  { id: 'nand-gate', title: 'A NAND GATE', w: 600e-9, name: 'A NAND gate', scale: '600 nm',
+    sub: 'Standard-cell rows between power rails. Highlighted NAND2: two pMOS in parallel, two nMOS in series. Illustrative layout.',
+    fact: 'Visible light can’t resolve features below ~200 nm, so fabs image this level with electron microscopes.' },
+  { id: 'gaa-transistor', title: 'GATE-ALL-AROUND TRANSISTOR', w: 80e-9, name: 'Gate-all-around transistor', scale: '80 nm',
+    sub: 'Three stacked ~5 nm silicon sheets, gate wrapped on all four sides, ~15 nm gate length. Generic cutaway.',
+    fact: 'A DNA double helix is about 2 nm wide.' },
+  { id: 'gate-stack', title: 'GATE STACK', w: 12e-9, name: 'Gate stack', scale: '12 nm',
+    sub: 'Si channel / SiO₂ interlayer (~0.5–1 nm) / HfO₂ high-k (~1.5–2 nm) / TiN metal. Illustrative cross-section.',
+    fact: 'The 5 nm sheet is only ~37 atomic planes thick.' },
+  { id: 'silicon-crystal', title: 'SILICON CRYSTAL', w: 3e-9, name: 'Silicon crystal', scale: '3 nm',
+    sub: 'Diamond-cubic lattice, a = 0.543 nm. Seen along [110], atoms pair into “dumbbells” 0.136 nm apart.',
+    fact: 'Fingernails grow about 1 nm per second: this view’s width in 2 to 3 seconds.' },
+  { id: 'silicon-atom', title: 'ONE SILICON ATOM', w: 0.8e-9, name: 'One silicon atom', scale: '0.8 nm',
+    sub: 'Four tetrahedral bonds at 109.5°, each neighbor 0.235 nm away. Ball-and-stick model.',
+    fact: 'About 4 million silicon atoms in a row would span just 1 mm.' },
+];
+const NSTOP = STOPS.length;
+const JMAX = NSTOP - 1;
+const LW = STOPS.map(s => Math.log10(s.w));
+
+// ---------------------------------------------------------------------------
+// Utilities
+// ---------------------------------------------------------------------------
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t * t * (3 - 2 * t);
+const sm = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const bump = (a, b, c, d, x) => sm(a, b, x) * (1 - sm(c, d, x));
+const DEG = Math.PI / 180;
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// Log-width along the journey. Smoothstep inside each segment so the zoom
+// settles on every stop; the HUD, ruler and cameras all read this one value.
+function lambdaAt(J) {
+  J = clamp(J, 0, JMAX);
+  const i = Math.min(JMAX - 1, Math.floor(J));
+  return lerp(LW[i], LW[i + 1], ease(J - i));
+}
+const widthAt = J => Math.pow(10, lambdaAt(J));
+
+function fmtLen(m) {
+  let f, u;
+  if (m >= 1) { f = 1; u = 'm'; }
+  else if (m >= 0.1) { f = 1e-2; u = 'cm'; }
+  else if (m >= 1e-3) { f = 1e-3; u = 'mm'; }
+  else if (m >= 1e-6) { f = 1e-6; u = 'µm'; }
+  else { f = 1e-9; u = 'nm'; }
+  const v = m / f;
+  const s = v >= 99.95 ? v.toFixed(0) : v >= 9.995 ? v.toFixed(1) : v.toFixed(2);
+  return s + ' ' + u;
+}
+
+// ---------------------------------------------------------------------------
+// Environment, flags
+// ---------------------------------------------------------------------------
+const Q = new URLSearchParams(location.search);
+const PIN = Q.has('j') ? clamp(parseFloat(Q.get('j')) || 0, 0, JMAX) : null;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const LOW = Math.max(innerWidth, innerHeight) < 900 || (navigator.hardwareConcurrency || 8) <= 4 ||
+  (navigator.deviceMemory || 8) <= 4 || Q.has('low');
+// Pixel ratio capped at 1.5 everywhere: at DPR 2 the fab costs ~23 ms/frame on a laptop GPU, ~13 ms at 1.5.
+const BASE_DPR = Math.min(window.devicePixelRatio || 1, LOW ? Math.min(1.5, CFG.dprCap) : CFG.dprCap);
+let renderScale = 1;
+
+// ---------------------------------------------------------------------------
+// Renderer
+// ---------------------------------------------------------------------------
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance', stencil: false });
+renderer.setPixelRatio(BASE_DPR);
+renderer.setSize(innerWidth, innerHeight, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.autoClear = true;
+
+const MSAA = Q.has("msaa") ? +Q.get("msaa") : (LOW ? 0 : CFG.msaa);
+const SWAY = REDUCED ? 0 : CFG.sway;
+function makeColorRT(depthTex) {
+  const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: MSAA, depthBuffer: true });
+  if (depthTex) { rt.depthTexture = new THREE.DepthTexture(4, 4); rt.depthTexture.type = THREE.UnsignedIntType; }
+  return rt;
+}
+const slotRT = [makeColorRT(!Q.has('nodepth')), makeColorRT(false)];
+const normalRT = [0, 1].map(() => new THREE.WebGLRenderTarget(4, 4, { type: THREE.UnsignedByteType, depthBuffer: true }));
+const normalMat = new THREE.MeshNormalMaterial();
+
+// ---------------------------------------------------------------------------
+// Levels: each is its own scene in local units. Filled in by level sections.
+// ---------------------------------------------------------------------------
+const LEVELS = [];     // index order = journey order
+// Handoff windows (in J) between level i and i+1: child fades in as the parent
+// feature fills the frame (see stop-table.md, camera and scale math).
+const HANDOFF = [[3.46, 3.56], [4.68, 4.82], [6.62, 6.8], [7.62, 7.8], [8.62, 8.8]];
+function activeLevels(J) {
+  for (let i = 0; i < HANDOFF.length; i++) {
+    const [a, b] = HANDOFF[i];
+    if (J < a) return { A: i, B: -1, f: 0 };
+    if (J <= b) return { A: i, B: i + 1, f: sm(a, b, J) };
+  }
+  return { A: HANDOFF.length, B: -1, f: 0 };
+}
+function levelSpan(i) {
+  const a = i === 0 ? 0 : HANDOFF[i - 1][0];
+  const b = i >= HANDOFF.length ? JMAX : HANDOFF[i][1];
+  return [a, b];
+}
+function ensureBuilt(i) {
+  const L = LEVELS[i];
+  if (L && !L.built) { L.build(); L.built = true; }
+}
+function newCamera() { return new THREE.PerspectiveCamera(40, (innerWidth || 1) / (innerHeight || 1), 0.1, 1000); }
+// Distance at which a camera sees `w` local units across the screen width.
+function distForWidth(cam, w) {
+  const hf = 2 * Math.atan(Math.tan(cam.fov * DEG / 2) * cam.aspect);
+  return w / (2 * Math.tan(hf / 2));
+}
+const _up = new THREE.Vector3();
+const _hz = new THREE.Vector3();
+// Orbit-style placement: target, azimuth (0 = camera on +z), elevation, distance.
+function placeCamera(cam, target, az, el, d) {
+  const ce = Math.cos(el * DEG), se = Math.sin(el * DEG);
+  const sa = Math.sin(az * DEG), ca = Math.cos(az * DEG);
+  cam.position.set(target.x + d * ce * sa, target.y + d * se, target.z + d * ce * ca);
+  _hz.set(-sa, 0, -ca);                       // horizontal forward
+  const t = sm(72, 89.5, el);
+  _up.set(0, 1, 0).lerp(_hz, t).normalize();
+  cam.up.copy(_up);
+  cam.lookAt(target);
+  cam.near = Math.max(d * 0.02, 1e-6);
+  cam.far = d * 60 + 10;
+}
+
+// ---------------------------------------------------------------------------
+// Instrument modes
+// ---------------------------------------------------------------------------
+function modeWeights(J) {
+  const opt = sm(3.46, 3.56, J) * (1 - sm(4.68, 4.82, J));
+  const sem = sm(4.68, 4.82, J) * (1 - sm(8.62, 8.8, J));
+  const stem = sm(8.62, 8.8, J) * (1 - sm(10.3, 10.75, J));
+  const model = sm(10.3, 10.75, J);
+  const cam = 1 - sm(3.46, 3.56, J);
+  return { cam, opt, sem, stem, model };
+}
+const BADGES = { cam: 'CAMERA', opt: 'OPTICAL MICROSCOPE', sem: 'SEM (illustrative)', stem: 'STEM (illustrative)', model: 'ATOMIC MODEL' };
+
+// ---------------------------------------------------------------------------
+// DOM: sections, HUD ruler, captions, end card
+// ---------------------------------------------------------------------------
+const track = document.getElementById('track');
+const endList = document.getElementById('endList');
+STOPS.forEach((s, i) => {
+  const sec = document.createElement('section');
+  sec.className = 'stop'; sec.id = s.id;
+  sec.setAttribute('aria-label', `Stop ${i + 1} of ${NSTOP}: ${s.name}, ${s.scale} field of view`);
+  track.appendChild(sec);
+  const li = document.createElement('li');
+  li.innerHTML = `<a href="#${s.id}" data-i="${i}"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${s.name}</span><span class="dot">·</span><span class="s">${s.scale}</span></a>`;
+  endList.appendChild(li);
+});
+const sections = [...track.children];
+
+const ruler = document.getElementById('ruler');
+const marker = document.getElementById('marker');
+const RULER_TOP = 2, RULER_BOT = -10;     // 100 m .. 0.1 nm
+const RULER_LABELS = { 2: '100 m', 0: '1 m', '-2': '1 cm', '-4': '100 µm', '-6': '1 µm', '-8': '10 nm', '-10': '0.1 nm' };
+for (let e = RULER_TOP; e >= RULER_BOT; e--) {
+  const f = (RULER_TOP - e) / (RULER_TOP - RULER_BOT);
+  const tk = document.createElement('div');
+  const major = (e % 2 === 0);
+  tk.className = 'tick' + (major ? ' major' : '');
+  tk.style.top = (f * 100) + '%';
+  ruler.appendChild(tk);
+  if (RULER_LABELS[e] !== undefined) {
+    const tl = document.createElement('div');
+    tl.className = 'tl'; tl.textContent = RULER_LABELS[e]; tl.style.top = (f * 100) + '%';
+    ruler.appendChild(tl);
+  }
+}
+LW.forEach(l => {
+  const d = document.createElement('div');
+  d.className = 'stopdot';
+  d.style.top = `calc(${((RULER_TOP - l) / (RULER_TOP - RULER_BOT)) * 100}% - 1.5px)`;
+  ruler.appendChild(d);
+});
+
+const fovVal = document.getElementById('fovVal');
+const badge = document.getElementById('badge');
+const capInner = document.getElementById('capInner');
+const capTitle = document.getElementById('capTitle');
+const capSub = document.getElementById('capSub');
+const capFact = document.getElementById('capFact');
+const opening = document.getElementById('opening');
+const endcard = document.getElementById('endcard');
+
+let capIdx = -1, capTimer = 0;
+function setCaption(i, instant) {
+  if (i === capIdx) return;
+  capIdx = i;
+  const s = STOPS[i];
+  const apply = () => {
+    capTitle.textContent = s.title;
+    capSub.textContent = s.sub;
+    capFact.innerHTML = '';
+    const k = document.createElement('span'); k.className = 'k'; k.textContent = 'Scale';
+    capFact.append(k, document.createTextNode(s.fact));
+    capInner.classList.remove('out');
+  };
+  clearTimeout(capTimer);
+  if (instant) { apply(); return; }
+  capInner.classList.add('out');
+  capTimer = setTimeout(apply, REDUCED ? 120 : 300);
+}
+
+let lastFovText = '', lastBadge = '', rulerH = 0;
+function updateHUD(J, W, modes) {
+  const t = fmtLen(W);
+  if (t !== lastFovText) { fovVal.textContent = t; lastFovText = t; }
+  if (!rulerH) rulerH = ruler.clientHeight;
+  const f = (RULER_TOP - Math.log10(W)) / (RULER_TOP - RULER_BOT);
+  marker.style.transform = `translateY(${(f * rulerH).toFixed(1)}px)`;
+  let best = 'cam', bv = -1;
+  for (const k in modes) if (modes[k] > bv) { bv = modes[k]; best = k; }
+  if (BADGES[best] !== lastBadge) {
+    lastBadge = BADGES[best];
+    badge.textContent = lastBadge;
+    badge.classList.remove('swap'); void badge.offsetWidth; badge.classList.add('swap');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Callout labels: DOM text anchored to 3D points in a level's local space
+// ---------------------------------------------------------------------------
+const labelRoot = document.getElementById('labels');
+const leaders = document.getElementById('leaders');
+const SVGNS = 'http://www.w3.org/2000/svg';
+const LABELS = [];
+if (Q.has('debug')) window.__labels = LABELS;
+// opts: { level, pos: Vector3 | () => Vector3, text, small, jc, jw, dx, dy, acc }
+function addLabel(opts) {
+  const el = document.createElement('div');
+  el.className = 'lab' + (opts.acc ? ' acc' : '');
+  el.textContent = opts.text;
+  if (opts.small) { const s = document.createElement('small'); s.textContent = opts.small; el.appendChild(s); }
+  labelRoot.appendChild(el);
+  const line = document.createElementNS(SVGNS, 'line');
+  const dot = document.createElementNS(SVGNS, 'circle');
+  dot.setAttribute('r', '2');
+  leaders.append(line, dot);
+  el.style.opacity = 0; line.style.opacity = 0; dot.style.opacity = 0;
+  const L = { jw: 0.35, dx: 40, dy: -30, ...opts, el, line, dot, w: 0, h: 0, vis: false };
+  LABELS.push(L);
+  return L;
+}
+const _lv = new THREE.Vector3();
+function updateLabels(J, act) {
+  const sw = innerWidth, sh = innerHeight, narrow = sw < 720;
+  for (const L of LABELS) {
+    let a = 0;
+    const lvl = LEVELS[L.level];
+    const weight = L.level === act.A ? (act.B >= 0 ? 1 - act.f : 1) : (L.level === act.B ? act.f : 0);
+    if (weight > 0 && lvl.built) {
+      const d = Math.abs(J - L.jc);
+      a = (1 - sm(L.jw * 0.55, L.jw, d)) * weight;
+      if (narrow && L.wide) a = 0;
+    }
+    if (a < 0.01) {
+      if (L.vis) { L.el.style.opacity = 0; L.line.style.opacity = 0; L.dot.style.opacity = 0; L.vis = false; }
+      continue;
+    }
+    const p = typeof L.pos === 'function' ? L.pos() : L.pos;
+    _lv.copy(p).project(lvl.camera);
+    if (_lv.z > 1 || _lv.z < -1) { a = 0; }
+    const x = (_lv.x * 0.5 + 0.5) * sw, y = (-_lv.y * 0.5 + 0.5) * sh;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) { L.bad = (L.bad || 0) + 1; a = 0; }
+    if (a < 0.01) {
+      if (L.vis) { L.el.style.opacity = 0; L.line.style.opacity = 0; L.dot.style.opacity = 0; L.vis = false; }
+      continue;
+    }
+    const k = narrow ? 0.6 : 1;
+    const tx = x + L.dx * k, ty = y + L.dy * k;
+    if (!L.w) { L.w = L.el.offsetWidth; L.h = L.el.offsetHeight; }
+    const left = L.dx < 0 ? tx - L.w : tx;
+    L.el.style.transform = `translate(${left.toFixed(1)}px, ${(ty - L.h * 0.5).toFixed(1)}px)`;
+    L.el.style.opacity = a.toFixed(3);
+    L.line.setAttribute('x1', x.toFixed(1)); L.line.setAttribute('y1', y.toFixed(1));
+    L.line.setAttribute('x2', (tx - Math.sign(L.dx) * 4).toFixed(1)); L.line.setAttribute('y2', ty.toFixed(1));
+    L.line.style.opacity = a.toFixed(3);
+    L.dot.setAttribute('cx', x.toFixed(1)); L.dot.setAttribute('cy', y.toFixed(1));
+    L.dot.style.opacity = a.toFixed(3);
+    L.vis = true;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Scroll -> journey parameter through a critically damped spring
+// ---------------------------------------------------------------------------
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+let J = 0, Jv = 0, Jt = 0;
+let navTarget = -1, navTime = 0;
+const OMEGA = REDUCED ? 3.6 : 6.5;
+function sectionH() { return (sections[1].offsetTop - sections[0].offsetTop) || innerHeight; }
+function readScroll() { Jt = clamp(scrollY / sectionH(), 0, JMAX); }
+addEventListener('scroll', readScroll, { passive: true });
+function stepSpring(dt) {
+  if (PIN !== null) { J = PIN; Jv = 0; return; }
+  const x = J - Jt, w = OMEGA, e = Math.exp(-w * dt);
+  const c = Jv + w * x;
+  J = Jt + (x + c * dt) * e;
+  Jv = (Jv - w * c * dt) * e;
+  if (Math.abs(J - Jt) < 1e-5 && Math.abs(Jv) < 1e-5) { J = Jt; Jv = 0; }
+}
+function goTo(i) {
+  i = clamp(i, 0, JMAX);
+  navTarget = i; navTime = performance.now();
+  scrollTo({ top: sections[i].offsetTop, behavior: REDUCED ? 'auto' : 'smooth' });
+}
+addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+  const interactive = e.target && e.target.closest && e.target.closest('a, button, input, textarea, select');
+  const base = (performance.now() - navTime < 900 && navTarget >= 0) ? navTarget : Math.round(Jt);
+  let to = null;
+  switch (e.key) {
+    case 'ArrowDown': case 'PageDown': to = base + 1; break;
+    case 'ArrowUp': case 'PageUp': to = base - 1; break;
+    case ' ': case 'Spacebar': if (interactive) return; to = e.shiftKey ? base - 1 : base + 1; break;
+    case 'Home': to = 0; break;
+    case 'End': to = JMAX; break;
+  }
+  if (to === null) return;
+  e.preventDefault();
+  goTo(to);
+});
+endList.addEventListener('click', e => {
+  const a = e.target.closest('a[data-i]');
+  if (!a) return;
+  e.preventDefault();
+  goTo(parseInt(a.dataset.i, 10));
+});
+
+let hashIdx = -1;
+function updateHash() {
+  const i = Math.round(Jt);
+  if (Math.abs(Jt - i) > 0.2 || i === hashIdx) return;
+  hashIdx = i;
+  history.replaceState(null, '', location.pathname + location.search + '#' + STOPS[i].id);
+}
+
+// ---------------------------------------------------------------------------
+// Post-processing: one grade pass does the level crossfade and every
+// instrument look (camera, optical, SEM, STEM, model), then bloom + output.
+// ---------------------------------------------------------------------------
+const GradeShader = {
+  uniforms: {
+    tA: { value: null }, tB: { value: null }, tNA: { value: null }, tNB: { value: null }, tDepth: { value: null },
+    mixAB: { value: 0 }, hasNA: { value: 0 }, hasNB: { value: 0 },
+    res: { value: new THREE.Vector2(1, 1) }, time: { value: 0 },
+    wCam: { value: 1 }, wOpt: { value: 0 }, wSem: { value: 0 }, wStem: { value: 0 }, wModel: { value: 0 },
+    flare: { value: 0 }, distort: { value: 0 }, vigR: { value: 9 },
+    dofAmt: { value: 0 }, focusDist: { value: 10 }, camNear: { value: 0.1 }, camFar: { value: 100 },
+    jitter: { value: 1 }, grain: { value: 1 },
+    outline: { value: 0 }, semMix: { value: 1 }, stemMix: { value: 1 }, motion: { value: 0 }, refocus: { value: 0 },
+  },
+  vertexShader: /* glsl */`
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+  fragmentShader: /* glsl */`
+    uniform sampler2D tA, tB, tNA, tNB, tDepth;
+    uniform float mixAB, hasNA, hasNB;
+    uniform vec2 res;
+    uniform float time, wCam, wOpt, wSem, wStem, wModel, flare, distort, vigR;
+    uniform float dofAmt, focusDist, camNear, camFar, jitter, grain;
+    uniform float outline, semMix, stemMix, motion, refocus;
+    varying vec2 vUv;
+
+    float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * .1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+    float lum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+    float linDepth(float d) { float z = d * 2.0 - 1.0; return 2.0 * camNear * camFar / (camFar + camNear - z * (camFar - camNear)); }
+
+    vec3 sampleA(vec2 uv) {
+      vec3 c = texture2D(tA, uv).rgb;
+      if (dofAmt < 0.001) return c;
+      float z = linDepth(texture2D(tDepth, uv).r);
+      float coc = clamp(abs(1.0 / focusDist - 1.0 / z) * focusDist, 0.0, 1.0) * dofAmt;
+      float r = coc * 7.0;
+      if (r < 0.6) return c;
+      vec3 acc = c; float ws = 1.0;
+      for (int i = 0; i < 12; i++) {
+        float a = float(i) * 2.39996;
+        float rr = sqrt((float(i) + 0.5) / 12.0) * r;
+        acc += texture2D(tA, uv + vec2(cos(a), sin(a)) * rr / res).rgb; ws += 1.0;
+      }
+      return acc / ws;
+    }
+    vec3 scene(vec2 uv) {
+      vec3 a = mixAB < 0.999 ? sampleA(uv) : vec3(0.0);
+      vec3 b = mixAB > 0.001 ? texture2D(tB, uv).rgb : vec3(0.0);
+      return mix(a, b, mixAB);
+    }
+    vec4 normals(vec2 uv) {
+      vec4 a = texture2D(tNA, uv) * hasNA;
+      vec4 b = texture2D(tNB, uv) * hasNB;
+      float wa = (1.0 - mixAB) * hasNA, wb = mixAB * hasNB;
+      float ws = max(wa + wb, 1e-4);
+      return (a * wa + b * wb) / ws;
+    }
+    float accentOf(vec3 c) { return clamp((c.g - max(c.r, c.b)) * 5.0 / max(c.g, 0.05), 0.0, 1.0) * step(0.02, c.g); }
+
+    void main() {
+      vec2 uv = vUv;
+      vec2 asp = vec2(res.x / res.y, 1.0);
+      vec2 cq = (uv - 0.5) * asp;
+      float r2 = dot(cq, cq);
+
+      // Lens distortion while passing through glass (dive) + optical chromatic aberration
+      float k = distort;
+      vec2 duv = 0.5 + (uv - 0.5) * (1.0 + k * r2 * 2.2 - k * 0.35);
+      float ca = 0.0025 * wOpt + 0.012 * distort;
+
+      // SEM scan-line jitter
+      float row = floor(uv.y * res.y * 0.5);
+      float jit = (hash12(vec2(row, floor(time * 24.0))) - 0.5) * 0.0011 * wSem * jitter;
+      jit += sin(uv.y * 900.0 + time * 7.0) * 0.00012 * wSem * jitter;
+      duv.x += jit;
+
+      vec3 col;
+      if (motion > 0.0005 || refocus > 0.001) {             // directional motion blur / refocus blur
+        vec3 acc2 = vec3(0.0);
+        float rr = refocus * 0.006;
+        for (int i = 0; i < 8; i++) {
+          float t = (float(i) / 7.0 - 0.5);
+          vec2 o = vec2(0.0, t * motion) + vec2(cos(float(i) * 2.4), sin(float(i) * 2.4)) * rr;
+          acc2 += scene(duv + o);
+        }
+        col = acc2 / 8.0;
+      } else if (ca > 0.0005) {
+        vec2 dir = (duv - 0.5);
+        col.r = scene(duv + dir * ca).r;
+        col.g = scene(duv).g;
+        col.b = scene(duv - dir * ca).b;
+      } else col = scene(duv);
+
+      float acc = accentOf(col);
+      vec3 outc = vec3(0.0);
+
+      // CAMERA: filmic, gentle vignette
+      if (wCam > 0.001) {
+        vec3 c = col * (1.0 - 0.28 * smoothstep(0.25, 1.1, r2 * 1.4));
+        outc += c * wCam;
+      }
+      // OPTICAL: bright-field microscope, circular objective field stop
+      if (wOpt > 0.001) {
+        float d = length(cq) * 2.0;
+        float mask = 1.0 - smoothstep(vigR - 0.012, vigR + 0.004, d);
+        float ring = exp(-pow((d - vigR) * 60.0, 2.0)) * 0.25 * step(vigR, 3.0);
+        vec3 c = col * vec3(1.04, 1.0, 0.95);
+        c *= 1.0 - 0.18 * smoothstep(0.3, 1.2, r2 * 1.4);
+        c = c * mask + vec3(0.9, 0.85, 0.8) * ring;
+        outc += c * wOpt;
+      }
+      // SEM: secondary-electron look from the normal buffer
+      if (wSem > 0.001) {
+        vec2 px = 1.0 / res * 2.0;
+        vec4 n0 = normals(duv);
+        vec3 N = n0.xyz * 2.0 - 1.0;
+        float geo = n0.a;
+        float facing = clamp(abs(N.z), 0.0, 1.0);
+        vec3 nx1 = normals(duv + vec2(px.x, 0.0)).xyz, nx0 = normals(duv - vec2(px.x, 0.0)).xyz;
+        vec3 ny1 = normals(duv + vec2(0.0, px.y)).xyz, ny0 = normals(duv - vec2(0.0, px.y)).xyz;
+        float ga = normals(duv + vec2(px.x, 0.0)).a + normals(duv - vec2(px.x, 0.0)).a + normals(duv + vec2(0.0, px.y)).a + normals(duv - vec2(0.0, px.y)).a;
+        float edge = length(nx1 - nx0) + length(ny1 - ny0);
+        edge = clamp(edge * 1.4, 0.0, 1.0) + clamp(abs(ga - 4.0 * geo) * 0.5, 0.0, 1.0);
+        float base = lum(col);
+        float tilt = 1.0 - facing;
+        float se = 0.03 + 0.95 * base + 0.38 * pow(tilt, 1.8) + 0.5 * edge;
+        se *= mix(0.18, 1.0, geo);                         // empty background stays dark
+        se += (hash12(uv * res + fract(time * 13.1) * 91.0) - 0.5) * 0.10 * grain;
+        se = pow(max(se, 0.0), 1.1);
+        vec3 c = vec3(se) * vec3(0.98, 1.0, 1.02);
+        c = mix(c, c * vec3(0.5, 1.1, 0.7) * 1.2, acc * 0.6);
+        vec3 illus = col * (0.75 + 0.5 * pow(tilt, 1.5)) + vec3(0.25) * edge;   // colour-kept 'illustrated' SEM
+        c = mix(illus, c, semMix);
+        outc += c * wSem;
+      }
+      // STEM (HAADF-like): atomic columns are additive bright blobs on black
+      if (wStem > 0.001) {
+        float L = lum(col);
+        float s = pow(clamp(L, 0.0, 4.0), 0.85);
+        s += (hash12(uv * res * 0.5 + fract(time * 7.3) * 57.0) - 0.5) * 0.05 * grain;
+        vec3 c = vec3(max(s, 0.0)) * vec3(0.96, 0.98, 1.03);
+        c = mix(c, c * vec3(0.45, 1.1, 0.7) * 1.2, acc * 0.85);
+        c = mix(col, c, stemMix);
+        outc += c * wStem;
+      }
+      // MODEL: clean 3D render
+      if (wModel > 0.001) {
+        vec3 c = col * (1.0 - 0.22 * smoothstep(0.3, 1.2, r2 * 1.4));
+        outc += c * wModel;
+      }
+
+      // Ink outlines from the normal buffer (illustrated variant)
+      if (outline > 0.001 && (hasNA + hasNB) > 0.0) {
+        vec2 px = 1.0 / res * 2.0;
+        vec4 c0 = normals(duv), cx = normals(duv + vec2(px.x, 0.0)), cy = normals(duv + vec2(0.0, px.y));
+        float e = length(c0.xyz - cx.xyz) + length(c0.xyz - cy.xyz) + abs(c0.a - cx.a) + abs(c0.a - cy.a);
+        float ink = smoothstep(0.18, 0.5, e);
+        outc = mix(outc, vec3(0.93, 0.95, 0.97), ink * outline * 0.55);
+      }
+      // Objective flare
+      if (flare > 0.001) {
+        float glow = exp(-r2 * 3.0);
+        float streak = exp(-abs(cq.y) * 40.0) * exp(-abs(cq.x) * 1.5);
+        outc += vec3(1.0, 0.96, 0.9) * flare * (glow * 3.0 + streak * 1.2 + 0.6);
+      }
+      // Film grain (very light)
+      outc += (hash12(uv * res + time * 60.0) - 0.5) * 0.012 * grain;
+      gl_FragColor = vec4(max(outc, 0.0), 1.0);
+    }`,
+};
+
+const gradeMat = new THREE.ShaderMaterial({
+  uniforms: THREE.UniformsUtils.clone(GradeShader.uniforms),
+  vertexShader: GradeShader.vertexShader,
+  fragmentShader: GradeShader.fragmentShader,
+  depthTest: false, depthWrite: false,
+});
+const U = gradeMat.uniforms;
+
+const composer = new EffectComposer(renderer);
+const gradePass = new ShaderPass(gradeMat);
+composer.addPass(gradePass);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.45, 0.55, 0.82);
+composer.addPass(bloomPass);
+composer.addPass(new OutputPass());
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  const pr = BASE_DPR * renderScale;
+  renderer.setPixelRatio(pr);
+  renderer.setSize(w, h, false);
+  composer.setPixelRatio(pr);
+  composer.setSize(w, h);
+  const pw = Math.max(2, Math.floor(w * pr)), ph = Math.max(2, Math.floor(h * pr));
+  slotRT.forEach(rt => rt.setSize(pw, ph));
+  normalRT.forEach(rt => rt.setSize(Math.max(2, pw >> 1), Math.max(2, ph >> 1)));
+  U.res.value.set(pw, ph);
+  for (const L of LEVELS) if (L.camera) { L.camera.aspect = (w || 1) / (h || 1); L.camera.updateProjectionMatrix(); }
+  rulerH = 0;
+  for (const L of LABELS) { L.w = 0; }
+}
+addEventListener('resize', () => { resize(); readScroll(); });
+
+// ---------------------------------------------------------------------------
+// Shared procedural wafer material (used in the fab and in the optical view).
+// Wafer-local coordinates in mm, wafer centre at the origin, notch at -y.
+// Die pitch 10.0 x 10.5 mm, 80 µm scribe lines, exposure field = 3 x 2 dies
+// (30 x 21 mm, within the 26 x 33 mm scanner maximum). Illustrative layout.
+// ---------------------------------------------------------------------------
+const WAFER = {
+  O: new THREE.Vector2(47.0, 44.0),       // die-grid origin (mm)
+  P: new THREE.Vector2(10.0, 10.5),       // die pitch (mm)
+  F: new THREE.Vector2(62.0, 54.5),       // centre of the outlined exposure field (mm)
+  T: new THREE.Vector2(63.2, 51.35),      // zoom target inside die (1, 0) (mm)
+};
+
+const WaferGLSL = /* glsl */`
+  uniform float uField, uDie, uCoax, uEnv, uStripes;
+  varying vec2 vP;
+  varying vec3 vWorld;
+  const vec2 O = vec2(47.0, 44.0);
+  const vec2 P = vec2(10.0, 10.5);
+  const float SH = 0.04;
+  const vec2 T = vec2(63.2, 51.35);
+
+  float h21(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+  vec3 filmRGB(float d, float cosT) {
+    float n = 1.46;
+    float ct = sqrt(max(0.0, 1.0 - (1.0 - cosT * cosT) / (n * n)));
+    vec3 ph = 4.0 * 3.14159265 * n * d * ct / vec3(640.0, 540.0, 460.0);
+    float r1 = -0.187, r2 = -0.465, rr = r1 * r2;
+    vec3 c = cos(ph);
+    vec3 R = (r1 * r1 + r2 * r2 + 2.0 * rr * c) / (1.0 + rr * rr + 2.0 * rr * c);
+    vec3 k = clamp((R - 0.085) / 0.28, 0.0, 1.0);          // stretch the 9-36 % reflectance range
+    return 0.05 + pow(k, vec3(1.25)) * 0.7;
+  }
+  // Anti-aliased stripes: coverage of lines (relative width duty, period p); fades to the mean when sub-pixel.
+  float stripes(float x, float p, float duty, float fw) {
+    float w = max(fw / p, 1e-4);
+    float f = fract(x / p);
+    float a = smoothstep(0.5 - duty * 0.5 - w, 0.5 - duty * 0.5 + w, f) - smoothstep(0.5 + duty * 0.5 - w, 0.5 + duty * 0.5 + w, f);
+    return mix(a, duty, clamp(w * 1.5 - 0.3, 0.0, 1.0));
+  }
+  float boxMask(vec2 u, vec2 a, vec2 b, float fw) {
+    vec2 d = min(u - a, b - u);
+    return smoothstep(-fw, fw, min(d.x, d.y));
+  }
+  float rectEdge(vec2 p, vec2 a, vec2 b) {
+    vec2 d = min(p - a, b - p);
+    if (d.x > 0.0 && d.y > 0.0) return min(d.x, d.y);
+    return length(max(-d, 0.0));
+  }
+
+  vec3 waferColor(vec3 V, out float alpha) {
+    alpha = 1.0;
+    vec2 p = vP;
+    float fw = max(fwidth(p.x), fwidth(p.y)) + 1e-7;
+    float r = length(p);
+    if (r > 150.0) discard;
+    if (p.y < -149.0 && abs(p.x) < (-149.0 - p.y) + 0.02) discard;   // 1 mm deep, 90 deg notch
+
+    float cosT = clamp(V.y, 0.02, 1.0);
+    vec3 R = reflect(-V, vec3(0.0, 1.0, 0.0));
+    float env = mix(0.12, 0.85, smoothstep(0.45, 0.95, R.y)) + 0.25 * smoothstep(0.2, 0.0, abs(R.x + 0.3)) * (1.0 - smoothstep(0.6, 0.9, R.y));
+    float light = mix(env * uEnv, 1.0, uCoax);
+
+    vec2 cq = mod(p - O, P);
+    vec2 q = cq - SH;
+    vec2 D = P - 2.0 * SH;
+    vec2 u = q / D;
+    float fu = fw / D.x;
+
+    // functional blocks (thin-film thickness in nm -> interference colour)
+    float io = 1.0 - boxMask(u, vec2(0.04), vec2(0.96), fu);
+    float sram = boxMask(u, vec2(0.06, 0.06), vec2(0.50, 0.44), fu);
+    float cores = boxMask(u, vec2(0.06, 0.48), vec2(0.50, 0.94), fu);
+    float cgap = max(1.0 - boxMask(vec2(abs(u.x - 0.28), abs(u.y - 0.71)), vec2(0.008), vec2(1.0), fu), 0.0);
+    cores *= 1.0 - cgap;
+    float gpu = boxMask(u, vec2(0.54, 0.36), vec2(0.94, 0.94), fu);
+    float misc = boxMask(u, vec2(0.54, 0.06), vec2(0.94, 0.32), fu);
+    float d = 100.0;
+    d = mix(d, 880.0, io);
+    d = mix(d, 460.0, sram);
+    d = mix(d, 220.0, cores);
+    d = mix(d, 340.0, gpu);
+    d = mix(d, 280.0, misc);
+    // sub-block mosaic, faded out when below pixel size
+    d += (h21(floor(q / 0.9)) - 0.5) * 10.0 * (1.0 - smoothstep(0.12, 0.45, fw / 0.9));
+    d += (h21(floor(q / 0.13) + 7.0) - 0.5) * 12.0 * (1.0 - smoothstep(0.12, 0.45, fw / 0.13)) * (1.0 - io);
+    d -= stripes(q.x, 0.25, 0.06, fw) * sram * 110.0 + stripes(q.y, 0.2, 0.06, fw) * sram * 110.0;
+    d += (stripes(q.x, 0.8, 0.04, fw) + stripes(q.y, 0.95, 0.04, fw)) * gpu * 160.0;
+
+    vec3 col = filmRGB(d, cosT);
+    vec3 al = vec3(0.86, 0.87, 0.89);
+    vec3 cu = vec3(0.98, 0.62, 0.47);
+    // bond pads in the I/O ring
+    float pads = io * stripes(q.x, 0.15, 0.47, fw) * stripes(q.y, 0.15, 0.47, fw) * (1.0 - boxMask(u, vec2(0.012), vec2(0.988), fu));
+    col = mix(col, al * 0.9, pads);
+    // top-level copper (visible only when zoomed in): vertical top wires, horizontal layer beneath
+    float vis = (1.0 - smoothstep(0.0006, 0.003, fw)) * uStripes;
+    float tm2 = stripes(p.y - T.y, 0.005, 0.5, fw);
+    float tm = stripes(p.x - T.x, 0.005, 0.5, fw);
+    col = mix(col, cu * 0.35, tm2 * vis * 0.85);
+    col = mix(col, cu * 0.95, tm * vis);
+    col = mix(col, col * 0.25, (1.0 - max(tm, tm2)) * vis * 0.7);
+
+    // scribe lines with test structures
+    float scribe = 1.0 - boxMask(cq, vec2(SH), P - SH, fw);
+    vec3 sc = filmRGB(40.0, cosT) * 0.8 + 0.08;
+    float tx = (1.0 - smoothstep(0.023 - fw, 0.023 + fw, min(cq.x, P.x - cq.x))) * stripes(cq.y, 0.5, 0.1, fw);
+    float ty = (1.0 - smoothstep(0.023 - fw, 0.023 + fw, min(cq.y, P.y - cq.y))) * stripes(cq.x, 0.5, 0.1, fw);
+    sc = mix(sc, al, clamp(tx + ty, 0.0, 1.0));
+    col = mix(col, sc, scribe);
+
+    // edge exclusion and bevel
+    float excl = smoothstep(146.8, 147.2, r);
+    col = mix(col, filmRGB(100.0, cosT), excl);
+    col *= 1.0 - 0.6 * smoothstep(149.4, 150.0, r);
+
+    col = mix(vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), col, 0.62);   // real films are less saturated
+    col = col * light;
+    col += vec3(pow(1.0 - cosT, 5.0) * 0.5 * uEnv);
+
+    // overlays: exposure-field outline (dashed white) and target die (green accent)
+    float fe = rectEdge(p, O, O + vec2(30.0, 21.0));
+    float dash = step(0.45, fract((p.x + p.y) / 0.9));
+    col = mix(col, vec3(1.25), (1.0 - smoothstep(0.9 * fw, 2.2 * fw, fe)) * dash * uField);
+    float de = rectEdge(p, O + vec2(10.0 + SH, SH), O + vec2(20.0 - SH, 10.5 - SH));
+    col = mix(col, vec3(0.25, 1.35, 0.62), (1.0 - smoothstep(1.2 * fw, 2.6 * fw, de)) * uDie);
+    return col;
+  }
+`;
+
+function makeWaferMaterial(mmPerUnit) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uScale: { value: mmPerUnit }, uField: { value: 0 }, uDie: { value: 0 },
+      uCoax: { value: 0 }, uEnv: { value: 1 }, uStripes: { value: 1 },
+    },
+    vertexShader: /* glsl */`
+      uniform float uScale;
+      varying vec2 vP;
+      varying vec3 vWorld;
+      void main() {
+        vP = vec2(position.x, -position.z) * uScale;
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vWorld = wp.xyz;
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }`,
+    fragmentShader: WaferGLSL + /* glsl */`
+      void main() {
+        vec3 V = normalize(cameraPosition - vWorld);
+        float a;
+        vec3 c = waferColor(V, a);
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  });
+}
+// Disk in the XZ plane (normal +y), radius in local units.
+function makeWaferGeometry(radius) {
+  const g = new THREE.CircleGeometry(radius, 256);
+  g.rotateX(-Math.PI / 2);
+  return g;
+}
+
+// ---------------------------------------------------------------------------
+// FAB level, part 1: environment (metres). Generic bay, no real layout.
+// Aisle along x, tools on both sides, OHT rails above the load-port lines.
+// ---------------------------------------------------------------------------
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const BAY = { x0: -36, x1: 32, front: 2.0, wall: 7.0, ceil: 4.5, railY: 3.75, railZ: 1.75 };
+const FOG = { color: new THREE.Color(0x07080a), density: 0.03 };
+const AMBER = new THREE.Color(1.0, 0.56, 0.18);
+
+// Panel material: seams, kick plate and base shading computed from world position.
+function panelMaterial(color, opts = {}) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: opts.rough ?? 0.62, metalness: opts.metal ?? 0.05, vertexColors: !!opts.vc });
+  m.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWP;')
+      .replace('#include <project_vertex>', `#include <project_vertex>
+        vec4 wpp = vec4(transformed, 1.0);
+        #ifdef USE_INSTANCING
+          wpp = instanceMatrix * wpp;
+        #endif
+        vWP = (modelMatrix * wpp).xyz;`);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', `#include <common>
+        varying vec3 vWP;
+        float seam(float x, float p, float w) { float f = abs(fract(x / p + 0.5) - 0.5) * p; return 1.0 - smoothstep(w * 0.5, w, f); }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        {
+          vec3 fn = normalize(cross(dFdx(vWP), dFdy(vWP)));
+          float along = abs(fn.z) > 0.5 ? vWP.x : vWP.z;
+          float s = 0.0;
+          if (abs(fn.y) < 0.5) {
+            s = max(seam(along, 0.62, 0.012), seam(vWP.y - 0.26, 100.0, 0.012));
+            s = max(s, seam(vWP.y - 1.08, 100.0, 0.01));
+            s = max(s, seam(vWP.y - 1.92, 100.0, 0.01));
+            diffuseColor.rgb *= mix(0.55, 1.0, smoothstep(0.02, 0.28, vWP.y));
+            float vent = step(0.05, vWP.y) * step(vWP.y, 0.22) * (0.5 + 0.5 * step(0.5, fract(vWP.y * 40.0)));
+            diffuseColor.rgb *= 1.0 - 0.25 * vent;
+          }
+          diffuseColor.rgb *= 1.0 - 0.45 * s;
+        }`);
+  };
+  return m;
+}
+
+function boxGeo(w, h, d, x = 0, y = 0, z = 0, color) {
+  const g = new THREE.BoxGeometry(w, h, d);
+  g.translate(x, y, z);
+  if (color) {
+    const c = new THREE.Color(color);
+    const n = g.attributes.position.count;
+    const arr = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { arr[i * 3] = c.r; arr[i * 3 + 1] = c.g; arr[i * 3 + 2] = c.b; }
+    g.setAttribute('color', new THREE.BufferAttribute(arr, 3));
+  }
+  return g;
+}
+
+// FOUP: 0.39 (x) x 0.335 (y) x 0.33 (z) m, door on +z, origin at bottom centre.
+function foupGeometry(withDoor = true) {
+  const shell = 0x8e979f, frame = 0x6b737b;
+  const parts = [
+    boxGeo(0.39, 0.30, 0.01, 0, 0.165, -0.16, shell),               // hollow shell: back, top, bottom, sides
+    boxGeo(0.39, 0.01, 0.30, 0, 0.31, -0.015, shell),
+    boxGeo(0.39, 0.01, 0.30, 0, 0.02, -0.015, shell),
+    boxGeo(0.01, 0.30, 0.30, 0.19, 0.165, -0.015, shell),
+    boxGeo(0.01, 0.30, 0.30, -0.19, 0.165, -0.015, shell),
+    boxGeo(0.36, 0.02, 0.28, 0, 0.005, -0.015, 0x4a5056),           // base plate
+    boxGeo(0.20, 0.018, 0.20, 0, 0.345, -0.015, 0x5c636a),          // robotic handling flange
+    boxGeo(0.08, 0.03, 0.08, 0, 0.325, -0.015, 0x5c636a),           // flange neck
+    boxGeo(0.012, 0.035, 0.12, 0.2, 0.2, -0.02, 0x5c636a),          // side handles
+    boxGeo(0.012, 0.035, 0.12, -0.2, 0.2, -0.02, 0x5c636a),
+    boxGeo(0.40, 0.02, 0.02, 0, 0.315, 0.137, frame),               // door frame (open ring)
+    boxGeo(0.40, 0.02, 0.02, 0, 0.015, 0.137, frame),
+    boxGeo(0.025, 0.32, 0.02, 0.1875, 0.165, 0.137, frame),
+    boxGeo(0.025, 0.32, 0.02, -0.1875, 0.165, 0.137, frame),
+  ];
+  if (withDoor) parts.push(boxGeo(0.35, 0.28, 0.02, 0, 0.165, 0.152, 0x7a838b));
+  return mergeGeometries(parts);
+}
+const foupMat = () => new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.38, metalness: 0.1 });
+
+function floorMaterialShader() {
+  return {
+    name: 'FabFloor',
+    uniforms: {
+      color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null },
+      uFogColor: { value: FOG.color }, uFogDensity: { value: FOG.density },
+    },
+    vertexShader: /* glsl */`
+      uniform mat4 textureMatrix;
+      varying vec4 vUvR;
+      varying vec3 vW;
+      void main() {
+        vUvR = textureMatrix * vec4(position, 1.0);
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vW = wp.xyz;
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform vec3 color;
+      uniform sampler2D tDiffuse;
+      uniform vec3 uFogColor;
+      uniform float uFogDensity;
+      varying vec4 vUvR;
+      varying vec3 vW;
+      void main() {
+        vec2 p = vW.xz;
+        float fw = max(fwidth(p.x), fwidth(p.y)) + 1e-5;
+        // 0.6 m raised-floor tiles with perforation holes
+        vec2 t = fract(p / 0.6);
+        float edge = min(min(t.x, 1.0 - t.x), min(t.y, 1.0 - t.y)) * 0.6;
+        float seam = 1.0 - smoothstep(0.004 - fw, 0.004 + fw, edge);
+        vec2 hp = (fract(p / 0.03) - 0.5) * 0.03;
+        float hole = 1.0 - smoothstep(0.0085 - fw * 0.7, 0.0085 + fw * 0.7, length(hp));
+        hole = mix(hole, 0.25, clamp(fw / 0.03 * 2.0 - 0.4, 0.0, 1.0));
+        hole *= step(0.03, edge);
+        vec2 uv = vUvR.xy / vUvR.w;
+        vec3 refl = texture2D(tDiffuse, uv).rgb * 0.4;
+        refl += texture2D(tDiffuse, uv + vec2(0.0025, 0.0)).rgb * 0.15;
+        refl += texture2D(tDiffuse, uv - vec2(0.0025, 0.0)).rgb * 0.15;
+        refl += texture2D(tDiffuse, uv + vec2(0.0, 0.004)).rgb * 0.15;
+        refl += texture2D(tDiffuse, uv - vec2(0.0, 0.004)).rgb * 0.15;
+        vec3 V = normalize(cameraPosition - vW);
+        float fres = 0.18 + 0.62 * pow(1.0 - clamp(V.y, 0.0, 1.0), 3.0);
+        vec3 base = vec3(0.028, 0.03, 0.033);
+        vec3 c = base + refl * fres * (1.0 - hole * 0.85);
+        c *= 1.0 - 0.55 * seam;
+        c = mix(c, vec3(0.004), hole * 0.75);
+        float d = length(cameraPosition - vW);
+        float fog = 1.0 - exp(-uFogDensity * uFogDensity * d * d);
+        gl_FragColor = vec4(mix(c, uFogColor, fog), 1.0);
+      }`,
+  };
+}
+
+function ceilingMaterial() {
+  return new THREE.ShaderMaterial({
+    uniforms: { uFogColor: { value: FOG.color }, uFogDensity: { value: FOG.density } },
+    vertexShader: /* glsl */`
+      varying vec3 vW;
+      void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vW = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: /* glsl */`
+      uniform vec3 uFogColor; uniform float uFogDensity;
+      varying vec3 vW;
+      void main() {
+        vec2 p = vW.xz;
+        float fw = max(fwidth(p.x), fwidth(p.y)) + 1e-5;
+        vec2 cell = vec2(1.2, 0.6);
+        vec2 t = fract(p / cell) * cell;
+        float e = min(min(t.x, cell.x - t.x), min(t.y, cell.y - t.y));
+        float frame = 1.0 - smoothstep(0.022 - fw, 0.022 + fw, e);
+        vec2 hp = (fract(p / 0.02) - 0.5);
+        float mesh = 0.5 + 0.5 * smoothstep(0.2, 0.35, length(hp));
+        mesh = mix(mesh, 0.75, clamp(fw / 0.02, 0.0, 1.0));
+        vec2 c = (t / cell - 0.5);
+        float glow = exp(-dot(c, c) * 5.0);
+        vec3 filterCol = vec3(0.030, 0.036, 0.044) * (0.6 + 0.8 * glow) * mesh;
+        vec3 col = mix(filterCol, vec3(0.055, 0.058, 0.062), frame);
+        float d = length(cameraPosition - vW);
+        float fog = 1.0 - exp(-uFogDensity * uFogDensity * d * d);
+        gl_FragColor = vec4(mix(col, uFogColor, fog * 0.85), 1.0);
+      }`,
+  });
+}
+
+// Instanced helper: collect matrices then create InstancedMesh.
+function instanced(geo, mat, mats) {
+  const m = new THREE.InstancedMesh(geo, mat, Math.max(1, mats.length));
+  mats.forEach((mx, i) => m.setMatrixAt(i, mx));
+  m.count = mats.length;
+  m.instanceMatrix.needsUpdate = true;
+  return m;
+}
+const _m4 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _p = new THREE.Vector3();
+function trs(x, y, z, sx = 1, sy = 1, sz = 1, ry = 0) {
+  _q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), ry);
+  return new THREE.Matrix4().compose(_p.set(x, y, z), _q, _s.set(sx, sy, sz));
+}
+
+function buildFabEnvironment(scene, heroShelfX, inspX0, inspX1) {
+  const rng = mulberry32(20260927);
+  const R = (a, b) => a + (b - a) * rng();
+  const env = { vehicles: [], rails: [] };
+
+  scene.fog = new THREE.FogExp2(FOG.color, FOG.density);
+  scene.add(new THREE.HemisphereLight(0x3a4656, 0x0c0906, 0.6));
+  const key = new THREE.DirectionalLight(0xbfd2ff, 0.5);
+  key.position.set(-8, 10, 4);
+  scene.add(key);
+  for (let x = -30; x <= 26; x += 9.5) {
+    const pl = new THREE.PointLight(AMBER, 4.5, 14, 1.7);
+    pl.position.set(x, 4.1, 0);
+    scene.add(pl);
+  }
+
+  // Floor (reflective, perforated raised floor)
+  const len = BAY.x1 - BAY.x0, cx = (BAY.x0 + BAY.x1) / 2;
+  const rw = Math.floor(innerWidth * BASE_DPR * (LOW ? 0.3 : 0.5));
+  const rh = Math.floor(innerHeight * BASE_DPR * (LOW ? 0.3 : 0.5));
+  const floor = new Reflector(new THREE.PlaneGeometry(len, BAY.wall * 2), {
+    textureWidth: rw, textureHeight: rh, clipBias: 0.003, color: 0xffffff, shader: floorMaterialShader(), multisample: 0,
+  });
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(cx, 0, 0);
+  scene.add(floor);
+  env.floor = floor;
+
+  // Ceiling filter grid
+  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(len, BAY.wall * 2), ceilingMaterial());
+  ceil.rotation.x = Math.PI / 2;
+  ceil.position.set(cx, BAY.ceil, 0);
+  scene.add(ceil);
+
+  // Walls and structural columns
+  const wallMat = panelMaterial(0x15181b, { rough: 0.8 });
+  for (const s of [-1, 1]) {
+    const w = new THREE.Mesh(new THREE.BoxGeometry(len, BAY.ceil, 0.2), wallMat);
+    w.position.set(cx, BAY.ceil / 2, s * BAY.wall);
+    scene.add(w);
+  }
+  for (const x of [BAY.x0, BAY.x1]) {
+    const w = new THREE.Mesh(new THREE.BoxGeometry(0.2, BAY.ceil, BAY.wall * 2), wallMat);
+    w.position.set(x, BAY.ceil / 2, 0);
+    scene.add(w);
+  }
+  const colM = [];
+  for (let x = BAY.x0 + 4; x < BAY.x1; x += 8) for (const s of [-1, 1]) colM.push(trs(x, BAY.ceil / 2, s * 6.55, 0.5, BAY.ceil, 0.5));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), panelMaterial(0x202428, { rough: 0.7 }), colM));
+
+  // Amber lithography-safe light strips (ceiling) + low kick-plate strips
+  const stripMat = new THREE.MeshBasicMaterial({ color: AMBER.clone().multiplyScalar(1.7) });
+  const stripM = [];
+  for (let x = BAY.x0 + 1.5; x < BAY.x1 - 1; x += 2.4) for (const s of [-1, 1]) stripM.push(trs(x, BAY.ceil - 0.06, s * 1.15, 1.9, 0.035, 0.07));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), stripMat, stripM));
+  const lowMat = new THREE.MeshBasicMaterial({ color: AMBER.clone().multiplyScalar(0.9) });
+  const lowM = [];
+  for (const s of [-1, 1]) lowM.push(trs(cx, 0.04, s * (BAY.front - 0.02), len - 1, 0.012, 0.012));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), lowMat, lowM));
+
+  // Process tools (generic), EFEMs, load ports, FOUPs, light towers, screens
+  const bodyM = [], efemM = [], portM = [], shelfLP = [], foupM = [], towerM = [], ledM = [], screenM = [];
+  const shelfXs = [-26, -21, -16, heroShelfX, -4, 1.5, 11.5, 17, 23];
+  const nearShelf = x => shelfXs.some(sx => Math.abs(sx - x) < 0.45);
+  for (const s of [1, -1]) {
+    let x = BAY.x0 + 0.8;
+    while (x < BAY.x1 - 2) {
+      const L = R(1.8, 3.4);
+      if (s === 1 && x + L > inspX0 - 0.3 && x < inspX1 + 0.3) { x = inspX1 + 0.4; continue; }
+      if (x + L > BAY.x1 - 0.6) break;
+      const dz = R(2.2, 3.4), h = R(2.0, 2.75);
+      const mx = x + L / 2;
+      const efemD = 0.55, zf = BAY.front;
+      efemM.push(trs(mx, 1.05, s * (zf + efemD / 2), L - 0.04, 2.1, efemD));
+      bodyM.push(trs(mx, h / 2, s * (zf + efemD + dz / 2), L, h, dz));
+      const nPorts = clamp(Math.floor(L / 0.58), 1, 4);
+      for (let k = 0; k < nPorts; k++) {
+        const px = mx + (k - (nPorts - 1) / 2) * 0.52;
+        if (nearShelf(px)) continue;
+        portM.push(trs(px, 0.45, s * (zf - 0.06), 0.42, 0.9, 0.12));
+        shelfLP.push(trs(px, 0.87, s * (zf - 0.24), 0.4, 0.03, 0.42));
+        if (rng() < 0.42) foupM.push(trs(px, 0.885, s * BAY.railZ, 1, 1, 1, s > 0 ? 0 : Math.PI));
+      }
+      towerM.push(trs(x + L - 0.18, h + 0.14, s * (zf + efemD + 0.2), 1, 1, 1));
+      ledM.push({ m: trs(x + L - 0.18, h + 0.2, s * (zf + efemD + 0.2), 1, 1, 1), c: rng() });
+      screenM.push(trs(mx + L * 0.28, 1.5, s * (zf - 0.002), 0.26, 0.18, 0.01));
+      x += L + R(0.35, 0.9);
+    }
+  }
+  const toolMat = panelMaterial(0xc3c8cd, { rough: 0.45 });
+  const efemMat = panelMaterial(0x8f969d, { rough: 0.5 });
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), toolMat, bodyM));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), efemMat, efemM));
+  const portMat = new THREE.MeshStandardMaterial({ color: 0x3d4247, roughness: 0.5, metalness: 0.3 });
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), portMat, portM));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), portMat, shelfLP));
+  const fGeo = foupGeometry(true), fMat = foupMat();
+  const towerGeo = new THREE.CylinderGeometry(0.028, 0.028, 0.28, 12);
+  scene.add(instanced(towerGeo, new THREE.MeshStandardMaterial({ color: 0x2a2e33, roughness: 0.5 }), towerM));
+  const ledGeo = new THREE.CylinderGeometry(0.031, 0.031, 0.05, 12);
+  const ledMesh = new THREE.InstancedMesh(ledGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }), ledM.length);
+  const cool = [new THREE.Color(0.35, 0.8, 2.2), new THREE.Color(0.9, 1.2, 2.0), new THREE.Color(0.4, 1.5, 2.0)];
+  ledM.forEach((o, i) => { ledMesh.setMatrixAt(i, o.m); ledMesh.setColorAt(i, cool[Math.floor(o.c * 3) % 3]); });
+  scene.add(ledMesh);
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.05, 0.09, 0.13) }), screenM));
+
+  // OHT rails (+z rail carries the hero; others carry ambient traffic)
+  const railMat = new THREE.MeshStandardMaterial({ color: 0x3b4046, roughness: 0.42, metalness: 0.6 });
+  const railDefs = [{ z: BAY.railZ, y: BAY.railY }, { z: -BAY.railZ, y: BAY.railY }, { z: 5.1, y: 3.95 }, { z: -5.1, y: 3.95 }];
+  const railM = [], rodM = [];
+  for (const r of railDefs) {
+    railM.push(trs(cx, r.y + 0.09, r.z, len - 0.4, 0.18, 0.1));
+    for (let x = BAY.x0 + 1; x < BAY.x1; x += 3) rodM.push(trs(x, (r.y + 0.18 + BAY.ceil) / 2, r.z, 0.03, BAY.ceil - r.y - 0.18, 0.03));
+  }
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), railMat, railM));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), railMat, rodM));
+
+  // Under-track storage shelves on the +z rail (hero shelf included)
+  const shelfM = [], shelfRodM = [];
+  for (const sx of shelfXs) {
+    shelfM.push(trs(sx, 2.52, BAY.railZ, 0.5, 0.03, 0.46));
+    for (const dx of [-0.23, 0.23]) shelfRodM.push(trs(sx + dx, (2.52 + BAY.railY) / 2, BAY.railZ, 0.02, BAY.railY - 2.52, 0.02));
+    if (sx !== heroShelfX && rng() < 0.75) foupM.push(trs(sx, 2.535, BAY.railZ, 1, 1, 1, 0));
+  }
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), portMat, shelfM));
+  scene.add(instanced(new THREE.BoxGeometry(1, 1, 1), railMat, shelfRodM));
+  scene.add(instanced(fGeo, fMat, foupM));
+
+  // Ambient OHT traffic on the other rails (animated with time)
+  const vehGeo = vehicleGeometry();
+  const vehMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.25 });
+  const amb = [];
+  railDefs.slice(1).forEach((r, ri) => {
+    const n = 4;
+    for (let k = 0; k < n; k++) amb.push({ z: r.z, y: r.y, off: k / n + rng() * 0.08, speed: (ri % 2 ? -1 : 1) * R(1.1, 1.6), foup: rng() < 0.6 });
+  });
+  env.vehMesh = new THREE.InstancedMesh(vehGeo, vehMat, amb.length);
+  env.vehFoups = new THREE.InstancedMesh(fGeo, fMat, amb.length);
+  env.vehMesh.frustumCulled = false; env.vehFoups.frustumCulled = false;
+  env.amb = amb;
+  scene.add(env.vehMesh, env.vehFoups);
+  env.len = len;
+  return env;
+}
+
+// OHT vehicle: chassis on the rail, side covers, open bottom. Origin at rail bottom centre.
+function vehicleGeometry() {
+  return mergeGeometries([
+    boxGeo(0.82, 0.16, 0.48, 0, -0.08, 0, 0x9aa1a8),
+    boxGeo(0.82, 0.44, 0.02, 0, -0.38, 0.235, 0xb3b9bf),
+    boxGeo(0.82, 0.44, 0.02, 0, -0.38, -0.235, 0xb3b9bf),
+    boxGeo(0.3, 0.05, 0.1, 0, 0.03, 0, 0x2c3035),
+    boxGeo(0.04, 0.03, 0.03, 0.39, -0.1, 0.2, 0x7fb8ff),
+  ]);
+}
+function updateAmbientVehicles(env, time) {
+  const t = REDUCED ? time * 0.35 : time;
+  const x0 = BAY.x0 + 1, span = env.len - 2;
+  env.amb.forEach((a, i) => {
+    let u = (a.off + t * a.speed / span) % 1; if (u < 0) u += 1;
+    const x = x0 + u * span;
+    env.vehMesh.setMatrixAt(i, trs(x, a.y, a.z));
+    env.vehFoups.setMatrixAt(i, a.foup ? trs(x, a.y - 0.57, a.z) : trs(0, -50, 0, 0.001, 0.001, 0.001));
+  });
+  env.vehMesh.instanceMatrix.needsUpdate = true;
+  env.vehFoups.instanceMatrix.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------------------
+// FAB level, part 2: hero FOUP + OHT hoist, inspection tool, robot, stage,
+// microscope, and the camera choreography for stops 1-4 and the dive.
+// ---------------------------------------------------------------------------
+const FX = { flare: 0, distort: 0, focus: 10, dof: 0 };
+const HERO = { shelfX: -10, toolX: 6.0, carryY: 3.18, shelfY: 2.535, portY: 0.885 };
+const INSP = { x0: 5.05, x1: 8.35, zf: 2.0, zm: 2.95, zb: 4.9, h: 2.3 };
+const CHUCK = new THREE.Vector3(6.0, 0.981, 3.45);
+const OBJ = new THREE.Vector3(6.0 + WAFER.F.x / 1000, 0, 3.45 - WAFER.F.y / 1000);  // objective axis above field centre
+const ROBOT_BASE = new THREE.Vector3(6.0, 0, 2.5);
+const SLOT_Y = HERO.portY + 0.045 + 12 * 0.01;            // slot 13 of 25 (10 mm pitch)
+const LENS_Y = [1.2, 1.05, 1.025, 1.003, 0.9925];
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+
+function travel(u) {
+  u = clamp(u, 0, 1); const a = 0.18, v = 1 / (1 - a);
+  if (u < a) return 0.5 * v * u * u / a;
+  if (u > 1 - a) { const w = 1 - u; return 1 - 0.5 * v * w * w / a; }
+  return v * (u - a / 2);
+}
+// Piecewise smooth keyframe channel: [[j, value], ...]
+function chan(K, J) {
+  if (J <= K[0][0]) return K[0][1];
+  for (let i = 0; i < K.length - 1; i++) {
+    if (J <= K[i + 1][0]) return lerp(K[i][1], K[i + 1][1], sm(K[i][0], K[i + 1][0], J));
+  }
+  return K[K.length - 1][1];
+}
+
+function heroState(J) {
+  const x = lerp(HERO.shelfX, HERO.toolX, travel((J - 0.8) / 1.0));
+  let y = HERO.shelfY;
+  if (J >= 0.52) y = lerp(HERO.shelfY, HERO.carryY, sm(0.52, 0.8, J));
+  if (J >= 1.8) y = lerp(HERO.carryY, HERO.portY, sm(1.8, 2.02, J));
+  const z = BAY.railZ + sm(2.08, 2.14, J) * 0.03;
+  const retracted = HERO.carryY + 0.354;
+  let grip;
+  if (J < 0.52) grip = lerp(retracted, HERO.shelfY + 0.354, sm(0.32, 0.52, J));
+  else if (J < 2.02) grip = y + 0.354;
+  else grip = lerp(HERO.portY + 0.354, retracted, sm(2.02, 2.2, J));
+  const vehX = J < 2.2 ? x : HERO.toolX + 26 * sm(2.2, 3.1, J);
+  return { x, y, z, grip, vehX, door1: sm(2.14, 2.22, J), door2: sm(2.22, 2.34, J) };
+}
+const ROBOT_K = {
+  phi: [[2.30, Math.PI / 2], [2.36, Math.PI], [2.60, Math.PI], [2.73, 0]],
+  r: [[2.30, 0.35], [2.38, 0.35], [2.46, 0.735], [2.52, 0.735], [2.60, 0.35], [2.74, 0.35], [2.84, 0.95], [2.89, 0.95], [2.97, 0.40]],
+  y: [[2.30, 0.95], [2.36, SLOT_Y - 0.008], [2.46, SLOT_Y - 0.008], [2.50, SLOT_Y + 0.004], [2.60, SLOT_Y + 0.004], [2.72, 0.992], [2.84, 0.992], [2.88, 0.977], [2.97, 0.977]],
+};
+
+function buildHero(scene, F) {
+  // Hero FOUP (door separate so it can open), green tag = "the thing we follow"
+  const g = new THREE.Group();
+  const shellMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.18, metalness: 0.05, transparent: true, opacity: 0.55, depthWrite: false });
+  const shell = new THREE.Mesh(foupGeometry(false), shellMat);
+  shell.renderOrder = 2;
+  g.add(shell);
+  F.door = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.28, 0.02), new THREE.MeshStandardMaterial({ color: 0x7a838b, roughness: 0.4 }));
+  F.door.position.set(0, 0.165, 0.152);
+  g.add(F.door);
+  const tagMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.06, 0.5, 0.22) });
+  const tag = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.004, 0.003), tagMat);
+  tag.position.set(0, 0.29, -0.167); g.add(tag);
+  const tag2 = new THREE.Mesh(new THREE.BoxGeometry(0.003, 0.004, 0.12), tagMat);
+  tag2.position.set(-0.197, 0.29, -0.015); g.add(tag2);
+  const wGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.0008, 64);
+  const others = new THREE.InstancedMesh(wGeo, new THREE.MeshStandardMaterial({ color: 0x6a6780, metalness: 0.85, roughness: 0.22 }), 24);
+  for (let k = 0, n = 0; k < 25; k++) { if (k === 12) continue; others.setMatrixAt(n++, trs(0, 0.045 + k * 0.01, -0.015)); }
+  g.add(others);
+  scene.add(g);
+  F.foup = g;
+
+  // Hero wafer (procedural die pattern, mm scale 1000 per metre)
+  F.waferMat = makeWaferMaterial(1000);
+  F.waferMat.uniforms.uEnv.value = 0.9;
+  F.wafer = new THREE.Mesh(makeWaferGeometry(0.15), F.waferMat);
+  scene.add(F.wafer);
+
+  // Hero OHT vehicle + hoist
+  F.veh = new THREE.Mesh(vehicleGeometry(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.25 }));
+  scene.add(F.veh);
+  const metal = new THREE.MeshStandardMaterial({ color: 0x40464c, roughness: 0.4, metalness: 0.6 });
+  F.gripper = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.03, 0.22), metal);
+  scene.add(F.gripper);
+  F.belts = [];
+  for (const [dx, dz] of [[-0.08, -0.08], [0.08, -0.08], [-0.08, 0.08], [0.08, 0.08]]) {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.012, 1, 0.003), new THREE.MeshStandardMaterial({ color: 0x1c1f22, roughness: 0.8 }));
+    b.userData.off = [dx, dz]; scene.add(b); F.belts.push(b);
+  }
+}
+
+function buildInspectionTool(scene, F) {
+  const { x0, x1, zf, zm, zb, h } = INSP;
+  const cx = (x0 + x1) / 2;
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x9aa1a8, roughness: 0.45, metalness: 0.4 });
+  const panel = panelMaterial(0xb2b8be);
+  const dark = new THREE.MeshStandardMaterial({ color: 0x24282c, roughness: 0.7, metalness: 0.1 });
+  const metal = new THREE.MeshStandardMaterial({ color: 0x8c939a, roughness: 0.3, metalness: 0.75 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x9fb4c8, roughness: 0.05, metalness: 0.0, transparent: true, opacity: 0.07, depthWrite: false });
+  const add = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); scene.add(m); return m; };
+  const B = (w, hh, d) => new THREE.BoxGeometry(w, hh, d);
+
+  // frame posts and top rails (cutaway enclosure: glass front and side, open roof)
+  for (const x of [x0, x1]) for (const z of [zf, zm, zb]) add(B(0.045, h, 0.045), frameMat, x, h / 2, z);
+  for (const z of [zf, zm, zb]) add(B(x1 - x0, 0.045, 0.045), frameMat, cx, h, z);
+  for (const x of [x0, x1]) add(B(0.045, 0.045, zb - zf), frameMat, x, h, (zf + zb) / 2);
+  add(B(x1 - x0, 0.84, 0.03), panel, cx, 0.42, zf);                         // lower front panel
+  add(B(x1 - x0, h - 0.84, 0.01), glass, cx, (h + 0.84) / 2, zf);           // front glass
+  add(B(0.01, h - 0.3, zb - zf), glass, x0, (h + 0.3) / 2, (zf + zb) / 2);  // side glass
+  add(B(0.03, 0.3, zb - zf), panel, x0, 0.15, (zf + zb) / 2);
+  add(B(0.03, h, zb - zf), panel, x1, h / 2, (zf + zb) / 2);
+  add(B(x1 - x0, h, 0.03), panel, cx, h / 2, zb);
+  add(B(x1 - x0, 0.02, zb - zf), dark, cx, 0.01, (zf + zb) / 2);
+  add(B(x1 - x0 - 0.1, 0.05, 0.03), frameMat, cx, 2.0, zm);                  // EFEM / process-module divider
+
+  // load port: frame around a 0.36 x 0.32 opening, kinematic shelf, column
+  const lp = 6.0;
+  add(B(0.44, 0.09, 0.05), frameMat, lp, 0.885, 1.975);
+  add(B(0.44, 0.09, 0.05), frameMat, lp, 1.295, 1.975);
+  add(B(0.04, 0.5, 0.05), frameMat, lp - 0.2, 1.09, 1.975);
+  add(B(0.04, 0.5, 0.05), frameMat, lp + 0.2, 1.09, 1.975);
+  add(B(0.4, 0.03, 0.42), dark, lp, 0.87, 1.76);
+  add(B(0.2, 0.855, 0.12), dark, lp, 0.43, 1.91);
+  const pins = new THREE.CylinderGeometry(0.008, 0.008, 0.012, 8);
+  for (const [dx, dz] of [[-0.1, -0.08], [0.1, -0.08], [0, 0.1]]) add(pins, metal, lp + dx, 0.891, 1.76 + dz);
+
+  // stage: granite, XY plates, chuck
+  add(B(0.9, 0.6, 0.95), dark, 6.0, 0.3, 3.475);
+  add(B(0.8, 0.12, 0.85), metal, 6.0, 0.66, 3.45);
+  add(B(0.62, 0.12, 0.62), metal, 6.0, 0.78, 3.45);
+  add(new THREE.CylinderGeometry(0.152, 0.152, 0.14, 64), new THREE.MeshStandardMaterial({ color: 0x2e3236, roughness: 0.35, metalness: 0.6 }), 6.0, 0.91, 3.45);
+
+  // microscope: column + arm on the -x side, hollow objective/tube assembly on the axis
+  add(B(0.2, 0.75, 0.19), panel, OBJ.x + 0.3, 0.975, OBJ.z);
+  add(B(0.275, 0.11, 0.07), panel, OBJ.x + 0.1625, 1.275, OBJ.z);
+  add(B(0.04, 0.2, 0.06), panel, OBJ.x + 0.045, 1.23, OBJ.z);
+  const prof = [
+    [0.013, 1.34], [0.024, 1.34], [0.024, 1.14], [0.036, 1.14], [0.042, 1.108], [0.042, 1.088], [0.028, 1.08],
+    [0.019, 1.075], [0.019, 1.022], [0.012, 0.997], [0.0072, 0.9912], [0.0052, 0.9912], [0.0062, 1.0],
+    [0.0105, 1.02], [0.012, 1.08], [0.013, 1.34],
+  ].map(([r, y]) => new THREE.Vector2(r, y));
+  const objMat = new THREE.MeshStandardMaterial({ color: 0x3a3f45, roughness: 0.55, metalness: 0.45, side: THREE.DoubleSide });
+  const lathe = new THREE.Mesh(new THREE.LatheGeometry(prof, 64), objMat);
+  lathe.position.set(OBJ.x, 0, OBJ.z); scene.add(lathe);
+  const ringMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.9, 0.85, 0.6) });
+  for (const y of [1.33, 1.3, 1.27, 1.24, 1.16, 1.12, 1.07, 1.04, 1.012]) {
+    const r = y > 1.08 ? 0.0127 : (y > 1.02 ? 0.0116 : 0.0092);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.00035, 6, 48), ringMat);
+    ring.rotation.x = Math.PI / 2; ring.position.set(OBJ.x, y, OBJ.z); scene.add(ring);
+  }
+  // gold engraved band on the objective
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.0192, 0.0192, 0.004, 48, 1, true), new THREE.MeshStandardMaterial({ color: 0xc9a44a, metalness: 0.9, roughness: 0.3 }));
+  band.position.set(OBJ.x, 1.045, OBJ.z); scene.add(band);
+  const lensMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.32, 0.26, 0.55), transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const lensR = [0.0128, 0.0115, 0.011, 0.0068, 0.0058];
+  LENS_Y.forEach((y, i) => {
+    const l = new THREE.Mesh(new THREE.CircleGeometry(lensR[i], 48), lensMat);
+    l.rotation.x = -Math.PI / 2; l.position.set(OBJ.x, y, OBJ.z); scene.add(l);
+  });
+  // three more objectives on the nosepiece (decorative)
+  for (let k = 1; k < 4; k++) {
+    const a = k * Math.PI / 2 + Math.PI / 4;
+    const o = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.008, 0.04, 32), objMat);
+    o.position.set(OBJ.x + Math.cos(a) * 0.03, 1.07, OBJ.z + Math.sin(a) * 0.03);
+    o.rotation.set(Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
+    scene.add(o);
+  }
+
+  // robot (SCARA-like): base, lift column, two links, fork
+  const rb = ROBOT_BASE;
+  add(new THREE.CylinderGeometry(0.13, 0.15, 0.62, 32), panel, rb.x, 0.31, rb.z);
+  F.rCol = add(B(0.09, 1, 0.09), metal, rb.x, 0.8, rb.z);
+  F.rL1 = add(B(0.085, 0.06, 0.36), panel, 0, 0, 0);
+  F.rL2 = add(B(0.07, 0.035, 0.36), panel, 0, 0, 0);
+  F.rJ1 = add(new THREE.CylinderGeometry(0.05, 0.05, 0.065, 24), metal, 0, 0, 0);
+  F.rJ2 = add(new THREE.CylinderGeometry(0.04, 0.04, 0.045, 24), metal, 0, 0, 0);
+  const fork = new THREE.Group();
+  for (const s of [-1, 1]) { const p = new THREE.Mesh(B(0.04, 0.006, 0.34), metal); p.position.set(s * 0.045, 0, 0.17); fork.add(p); }
+  const bar = new THREE.Mesh(B(0.13, 0.01, 0.04), metal); bar.position.set(0, 0, 0.02); fork.add(bar);
+  scene.add(fork); F.fork = fork;
+
+  // tool lights and status LED
+  F.toolLight = new THREE.PointLight(0xdfe7ff, 0, 3.2, 1.4);
+  F.toolLight.position.set(6.25, 1.95, 3.0); scene.add(F.toolLight);
+  F.stageLight = new THREE.PointLight(0xfff2e0, 0, 1.6, 1.5);
+  F.portLight = new THREE.PointLight(0xe6eeff, 0, 3.0, 1.5);
+  F.portLight.position.set(5.45, 1.9, 1.15); scene.add(F.portLight);
+  F.stageLight.position.set(6.25, 1.6, 3.75); scene.add(F.stageLight);
+  add(new THREE.CylinderGeometry(0.03, 0.03, 0.05, 12), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.4, 0.9, 2.2) }), x1 - 0.12, h + 0.05, zf + 0.1);
+}
+
+function updateHeroAndRobot(F, J) {
+  const s = heroState(J);
+  F.foup.position.set(s.x, s.y, s.z);
+  F.door.position.set(0, 0.165 - s.door2 * 0.36, 0.152 + s.door1 * 0.1);
+  F.veh.position.set(s.vehX, BAY.railY, BAY.railZ);
+  const gx = J < 2.2 ? s.x : s.vehX;
+  F.gripper.position.set(gx, s.grip + 0.015, BAY.railZ - 0.015);
+  const top = BAY.railY - 0.16, bl = Math.max(0.001, top - (s.grip + 0.03));
+  F.belts.forEach(b => { b.scale.y = bl; b.position.set(gx + b.userData.off[0], top - bl / 2, BAY.railZ + b.userData.off[1]); });
+
+  const phi = chan(ROBOT_K.phi, J), r = chan(ROBOT_K.r, J), fy = chan(ROBOT_K.y, J);
+  const L = 0.36, e = 0.27, rb = ROBOT_BASE;
+  const rw = clamp(r - e, 0.02, 2 * L - 1e-3);
+  const al = Math.acos(rw / (2 * L));
+  const a1 = phi + al, a2 = phi - al;
+  const ex = rb.x + Math.sin(a1) * L, ez = rb.z + Math.cos(a1) * L;
+  const wx = ex + Math.sin(a2) * L, wz = ez + Math.cos(a2) * L;
+  const colTop = fy - 0.085;
+  F.rCol.scale.y = colTop - 0.62; F.rCol.position.set(rb.x, (colTop + 0.62) / 2, rb.z);
+  F.rL1.position.set((rb.x + ex) / 2, fy - 0.055, (rb.z + ez) / 2); F.rL1.rotation.y = a1;
+  F.rL2.position.set((ex + wx) / 2, fy - 0.022, (ez + wz) / 2); F.rL2.rotation.y = a2;
+  F.rJ1.position.set(ex, fy - 0.04, ez);
+  F.rJ2.position.set(wx, fy - 0.012, wz);
+  F.fork.position.set(wx, fy - 0.003, wz); F.fork.rotation.y = phi;
+
+  if (J < 2.5) F.wafer.position.set(s.x, s.y + 0.165, s.z - 0.015);
+  else if (J < 2.875) F.wafer.position.set(wx + Math.sin(phi) * e, fy + 0.0008, wz + Math.cos(phi) * e);
+  else F.wafer.position.copy(CHUCK);
+}
+
+// Camera keyframes: target, azimuth (deg, 0 = camera on +z), elevation, max distance
+function heroTarget(J) { const s = heroState(J); return V3(s.x, s.y + 0.17, s.z); }
+const FAB_KEYS = [
+  { j: 0.00, T: () => V3(-4, 1.0, 0.1), az: -90, el: 5, dmax: 26 },
+  { j: 0.42, T: heroTarget, az: -100, el: 9, dmax: 12 },
+  { j: 1.00, T: heroTarget, az: -118, el: 15, dmax: 4.0 },
+  { j: 1.70, T: heroTarget, az: -128, el: 17, dmax: 2.2 },
+  { j: 2.00, T: () => V3(6.05, 1.02, 1.9), az: -118, el: 18, dmax: 1.2 },
+  { j: 2.30, T: () => V3(6.0, 1.05, 2.15), az: -125, el: 32, dmax: 1.0 },
+  { j: 2.62, T: () => V3(6.0, 1.0, 2.8), az: -95, el: 50, dmax: 0.8 },
+  { j: 3.00, T: () => V3(CHUCK.x, CHUCK.y, CHUCK.z + 0.01), az: -40, el: 36, dmax: 0.6 },
+  { j: 3.20, T: () => V3(OBJ.x, 0.99, OBJ.z), az: -25, el: 89.5, dmax: 0.36 },
+  { j: 3.55, T: () => V3(OBJ.x, 0.99, OBJ.z), az: 0, el: 89.5, dmax: 0.36 },
+];
+
+const FAB = { key: 'fab', unit: 1, sem: false, clear: 0x07080a, built: false };
+LEVELS[0] = FAB;
+FAB.build = function () {
+  FAB.scene = new THREE.Scene();
+  FAB.camera = newCamera();
+  FAB.env = buildFabEnvironment(FAB.scene, HERO.shelfX, INSP.x0, INSP.x1);
+  buildHero(FAB.scene, FAB);
+  buildInspectionTool(FAB.scene, FAB);
+  addLabel({ level: 0, pos: () => heroTarget(J).add(V3(0, 0.2, 0)), text: 'FOUP', small: '25 wafers, sealed', jc: 1.0, jw: 0.45, dx: 70, dy: -60, acc: true });
+  addLabel({ level: 0, pos: V3(6.0, 0.87, 1.58), text: 'Load port', jc: 2.0, jw: 0.28, dx: -80, dy: 50 });
+  addLabel({ level: 0, pos: V3(6.0, 0.981, 3.45 + 0.1495), text: 'Notch', small: '1 mm deep', jc: 3.0, jw: 0.22, dx: 70, dy: 36, acc: true });
+  addLabel({ level: 0, pos: V3(OBJ.x - 0.019, 1.035, OBJ.z), text: 'Objective', jc: 3.0, jw: 0.22, dx: -80, dy: -60 });
+};
+const _tA = new THREE.Vector3();
+FAB.update = function (J, W, time) {
+  const F = FAB, cam = F.camera;
+  updateAmbientVehicles(F.env, time);
+  updateHeroAndRobot(F, J);
+  F.toolLight.intensity = 7 * sm(1.85, 2.2, J);
+  F.stageLight.intensity = 1.1 * sm(2.6, 2.95, J);
+  F.portLight.intensity = 3.2 * bump(1.6, 1.9, 2.4, 2.7, J);
+
+  // camera
+  let k = 0;
+  while (k < FAB_KEYS.length - 2 && J > FAB_KEYS[k + 1].j) k++;   // (last key at 3.55 covers the dive)
+  const A = FAB_KEYS[k], B = FAB_KEYS[k + 1];
+  const t = sm(A.j, B.j, J);
+  const T = A.T(J).lerp(B.T(J), t);
+  const az = lerp(A.az, B.az, t), el = lerp(A.el, B.el, t);
+  const dmax = Math.exp(lerp(Math.log(A.dmax), Math.log(B.dmax), t));
+  let d = Math.min(distForWidth(cam, W), dmax);
+  if (J > 3.2) d = Math.exp(lerp(Math.log(0.36), Math.log(0.0085), sm(3.2, 3.54, J)));
+  const sway = SWAY;
+  const swayAz = sway * Math.sin(time * 0.21) * 0.8 * (1 - sm(2.9, 3.1, J));
+  const swayEl = sway * Math.sin(time * 0.17 + 1.3) * 0.4 * (1 - sm(2.9, 3.1, J));
+  placeCamera(cam, T, az + swayAz, el + swayEl, d);
+  if (J < 2.2) {                       // keep the camera in the aisle, under the ceiling
+    const p = cam.position;
+    const y0 = p.y, z0 = p.z;
+    p.y = Math.min(p.y, 4.2);
+    if (p.y < 2.9) p.z = clamp(p.z, -1.45, 1.45);
+    if (p.y !== y0 || p.z !== z0) cam.lookAt(T);
+  }
+  cam.far = Math.max(cam.far, 120);
+  cam.updateProjectionMatrix();
+
+  // lens effects through the objective
+  let dist = 0;
+  const cy = cam.position.y;
+  if (J > 3.2) for (const ly of LENS_Y) dist += Math.exp(-Math.pow((cy - ly) / 0.004, 2));
+  FX.distort = dist * (REDUCED ? 0.25 : 0.6);
+  FX.flare = Math.exp(-Math.pow((J - 3.505) / 0.03, 2)) * (REDUCED ? 0.35 : 1.0);
+  FX.focus = d;
+  FX.dof = LOW ? 0 : 0.85 * (1 - sm(2.95, 3.15, J));
+};
+
+// ---------------------------------------------------------------------------
+// OPTICAL level (millimetres): bright-field microscope view of the wafer.
+// World mapping: wafer (x, y) mm -> (x, 0, -y); camera looks straight down.
+// ---------------------------------------------------------------------------
+const OPT = { key: 'optical', unit: 1e-3, sem: false, clear: 0x030303, built: false };
+LEVELS[1] = OPT;
+OPT.build = function () {
+  const scene = OPT.scene = new THREE.Scene();
+  OPT.camera = newCamera();
+  OPT.mat = makeWaferMaterial(1);
+  OPT.mat.uniforms.uCoax.value = 0.85;
+  OPT.mat.uniforms.uEnv.value = 0.6;
+  scene.add(new THREE.Mesh(makeWaferGeometry(150), OPT.mat));
+  const chuck = new THREE.Mesh(new THREE.CircleGeometry(160, 128), new THREE.MeshBasicMaterial({ color: 0x0b0c0d }));
+  chuck.rotation.x = -Math.PI / 2; chuck.position.y = -0.8;
+  scene.add(chuck);
+  const O = WAFER.O;
+  const w = (x, y) => V3(x, 0, -y);
+  addLabel({ level: 1, pos: w(O.x, O.y + 21), text: 'Exposure field', small: '30 × 21 mm, one reticle shot', jc: 4.0, jw: 0.32, dx: 46, dy: 40 });
+  addLabel({ level: 1, pos: w(O.x + 15, O.y + 3.2), text: 'One die', small: '10 × 10.5 mm', jc: 4.0, jw: 0.32, dx: 70, dy: 44, acc: true });
+  addLabel({ level: 1, pos: w(O.x + 4, O.y + 10.5), text: 'Scribe line', small: '80 µm wide, test structures', jc: 4.0, jw: 0.32, dx: 40, dy: -46, wide: true });
+};
+const _oc = new THREE.Vector2();
+OPT.update = function (J, W) {
+  const cam = OPT.camera, u = OPT.mat.uniforms;
+  _oc.copy(WAFER.F).lerp(WAFER.T, sm(4.02, 4.72, J));
+  const d = distForWidth(cam, W / OPT.unit);
+  placeCamera(cam, V3(_oc.x, 0, -_oc.y), 0, 89.9, d);
+  cam.updateProjectionMatrix();
+  u.uField.value = bump(3.62, 3.82, 4.22, 4.42, J);
+  u.uDie.value = bump(3.72, 3.95, 4.45, 4.62, J);
+  FX.vig = lerp(0.32, 3.2, sm(3.5, 3.95, J));
+};
+
+// ---------------------------------------------------------------------------
+// METAL level (micrometres): back-end-of-line interconnect, dielectric removed.
+// 18 illustrative layers, pitch 5 µm at the top down to 24 nm at M0.
+// Origin at the optical zoom target; x right, z = -wafer y, y up.
+// Layers below the top two are cut at z = 0 (like a FIB cross-section), so
+// the camera can descend the cut face and see the whole stack at once.
+// ---------------------------------------------------------------------------
+const MET_P = [0.024, 0.028, 0.032, 0.040, 0.048, 0.064, 0.080, 0.080, 0.160, 0.160, 0.320, 0.320, 0.720, 0.720, 1.6, 1.6, 5.0, 5.0];
+const MET_Y = [];
+{
+  let y = 0.07;
+  MET_P.forEach((p, i) => { if (i > 0) y += 0.7 * p; MET_Y.push(y); y += p; });
+}
+const MET_CUT = 15;                      // layers 0..15 are cut at z = 0
+function metalHeightAtPitch(pp) {
+  if (pp <= MET_P[0]) return MET_Y[0];
+  for (let i = 0; i < MET_P.length - 1; i++) {
+    const a = MET_P[i], b = MET_P[i + 1];
+    if (pp <= b) {
+      const t = b > a ? (Math.log(pp) - Math.log(a)) / (Math.log(b) - Math.log(a)) : 1;
+      return lerp(MET_Y[i], MET_Y[i + 1], t);
+    }
+  }
+  return MET_Y[MET_Y.length - 1] + MET_P[MET_P.length - 1];
+}
+
+const MET = { key: 'metal', unit: 1e-6, sem: true, clear: 0x000000, built: false };
+LEVELS[2] = MET;
+MET.build = function () {
+  const scene = MET.scene = new THREE.Scene();
+  MET.camera = newCamera();
+  MET.camera.fov = 22;
+  scene.add(new THREE.HemisphereLight(0xdfe6ee, 0x202020, 0.5));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(-3, 6, 4); scene.add(key);
+  const rng = mulberry32(77);
+  const R = (a, b) => a + (b - a) * rng();
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  const accMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(0.12, 0.85, 0.38), emissive: new THREE.Color(0.02, 0.28, 0.1), roughness: 0.45, metalness: 0.2 });
+  const scale = LOW ? 0.55 : 1;
+  MET.layers = [];
+  MET_P.forEach((p, i) => {
+    const t = p, w = p / 2, y = MET_Y[i] + t / 2;
+    const alongX = (i % 2 === 0);
+    const cut = i <= MET_CUT;
+    const E = (i <= 7 ? 100 : 60) * p * scale;
+    const nT = Math.floor(E / p);
+    const zMax = cut ? 0 : E;
+    const mats = [], accM = [];
+    const seg = (c, a, b) => {
+      const L = b - a, m = (a + b) / 2;
+      return alongX ? trs(m, y, c, L, t, w) : trs(c, y, m, w, t, L);
+    };
+    for (let k = -nT; k < nT; k++) {
+      const c = (k + 0.5) * p;
+      if (alongX && cut && c + w / 2 > 0) continue;              // whole line in front of the cut
+      const segs = [];
+      if (i >= 12) segs.push([-E, alongX ? E : zMax]);
+      else {
+        let s = -E + R(0, 10) * p;
+        while (s < E) { const l = R(8, 40) * p; segs.push([s, Math.min(E, s + l)]); s += l + R(1.5, 3) * p; }
+      }
+      for (let [a, b] of segs) {
+        if (!alongX) { b = Math.min(b, zMax); if (b - a < p * 0.5) continue; }
+        if (k === -1 && a < 0.8 * p && b > -0.8 * p) {                 // accent net, just behind the cut
+          const a0 = -0.8 * p, b0 = alongX ? 0.8 * p : Math.min(0.8 * p, zMax);
+          if (a < a0) mats.push(seg(c, a, a0 - 0.4 * p));
+          if (b > b0 + 0.4 * p) mats.push(seg(c, b0 + 0.4 * p, b));
+          accM.push(seg(c, a0, b0));
+          continue;
+        }
+        mats.push(seg(c, a, b));
+      }
+    }
+    const mat = new THREE.MeshStandardMaterial({ color: i >= 14 ? 0xc98a62 : 0xb9876a, roughness: 0.5, metalness: 0.3, transparent: true });
+    const mesh = instanced(box, mat, mats);
+    scene.add(mesh);
+    let via = null;
+    if (i < MET_P.length - 1) {
+      const pu = MET_P[i + 1], gap = 0.7 * pu, vm = [];
+      const n = Math.floor((LOW ? 160 : 380) * (i >= 12 ? 0.5 : 1));
+      const Eu = Math.min(E, (i + 1 <= 7 ? 100 : 60) * pu * scale);
+      for (let v = 0; v < n; v++) {
+        const a = (Math.floor(R(-Eu, Eu) / p) + 0.5) * p;
+        const b = (Math.floor(R(-Eu, Eu) / pu) + 0.5) * pu;
+        const x = alongX ? b : a, z = alongX ? a : b;
+        if (cut && z + w / 2 > 0) continue;
+        vm.push(trs(x, MET_Y[i] + t + gap / 2, z, w, gap, w));
+      }
+      const ax = alongX ? -0.5 * pu : -0.5 * p, az = alongX ? -0.5 * p : -0.5 * pu;
+      accM.push(trs(ax, MET_Y[i] + t + gap / 2, az, w, gap, w));
+      via = instanced(box, new THREE.MeshStandardMaterial({ color: 0xd8d2cc, roughness: 0.45, metalness: 0.3, transparent: true }), vm);
+      scene.add(via);
+    }
+    const acc = instanced(box, accMat.clone(), accM);
+    scene.add(acc);
+    MET.layers.push({ mesh, via, acc, p, bottom: MET_Y[i], top: MET_Y[i] + t });
+  });
+  const base = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.9 }));
+  base.rotation.x = -Math.PI / 2;
+  scene.add(base);
+  addLabel({ level: 2, pos: V3(2.5, MET_Y[17] + 5, 10), text: 'Top-level copper', small: 'thickest wires: power and clock', jc: 5.0, jw: 0.32, dx: 70, dy: 40 });
+  addLabel({ level: 2, pos: V3(-0.16, MET_Y[11] + 0.32 + 0.252, -0.36), text: 'Via', small: 'vertical link between layers', jc: 6.0, jw: 0.3, dx: 70, dy: -60, acc: true });
+  addLabel({ level: 2, pos: V3(0.25, MET_Y[0] + 0.024, -0.012), text: 'Finest layer', small: '~24 nm pitch', jc: 6.52, jw: 0.2, dx: 70, dy: 40 });
+};
+MET.update = function (J, W, time) {
+  const cam = MET.camera;
+  const w = W / MET.unit;
+  let yf = metalHeightAtPitch(w / 8);
+  yf = lerp(yf, 0.05, sm(1.6, 0.8, w));
+  yf = Math.min(yf, MET_Y[17] + 5);
+  const el = chan([[4.8, 88], [5.0, 58], [5.5, 36], [6.0, 22], [6.6, 30], [6.8, 34]], J);
+  const drift = SWAY * Math.sin(time * 0.13) * 2.5 * sm(4.85, 5.1, J);
+  const az = chan([[4.8, 0], [5.0, -8], [6.0, 6], [6.8, 0]], J) + drift;
+  placeCamera(cam, V3(0, yf, 0), az, el, distForWidth(cam, w));
+  cam.updateProjectionMatrix();
+  for (const L of MET.layers) {
+    const fine = sm(200 * L.p, 100 * L.p, w);
+    const above = 1 - sm(0.45 * w, 0.6 * w, L.bottom - yf);
+    const a = fine * above;
+    for (const m of [L.mesh, L.acc, L.via]) {
+      if (!m) continue;
+      m.visible = a > 0.02;
+      m.material.opacity = a;
+      m.material.transparent = a < 0.995;
+      m.material.depthWrite = a > 0.5;
+    }
+  }
+};
+
+// ---------------------------------------------------------------------------
+// CELLS level (nanometres): standard-cell rows, 48 nm gate pitch, 144 nm rows
+// (6 x 24 nm tracks). x = along the row, z = -v (v points up the screen), y up.
+// Row r spans v in [rH, (r+1)H]; rails at row edges alternate VSS / VDD.
+// The NAND2 sits in row 0 between dummy gates at x = +/-72. Illustrative.
+// ---------------------------------------------------------------------------
+const CPP = 48, ROWH = 144;
+const CELLS = { key: 'cells', unit: 1e-9, sem: true, clear: 0x000000, built: false };
+LEVELS[3] = CELLS;
+CELLS.build = function () {
+  const scene = CELLS.scene = new THREE.Scene();
+  CELLS.camera = newCamera();
+  CELLS.camera.fov = 22;
+  scene.add(new THREE.HemisphereLight(0xe8eef4, 0x202020, 0.5));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(-2, 5, 3); scene.add(key);
+  const rng = mulberry32(4242);
+  const R = (a, b) => a + (b - a) * rng();
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  const M = { gate: [], dummy: [], epi: [], ts: [], v0: [], m0: [], rail: [], cb: [], acc: [] };
+  // helper: axis-aligned box from x/v/y ranges
+  const bx = (arr, x0, x1, v0, v1, y0, y1) => arr.push(trs((x0 + x1) / 2, (y0 + y1) / 2, -(v0 + v1) / 2, x1 - x0, y1 - y0, v1 - v0));
+  const rows = LOW ? [-2, 3] : [-3, 4];
+  const XE = LOW ? 700 : 1150;
+  for (let r = rows[0]; r <= rows[1]; r++) {
+    const vb = r * ROWH, vt = (r + 1) * ROWH;
+    const vssBottom = (r % 2 === 0);
+    const nAct = vssBottom ? [vb + 22, vb + 52] : [vt - 52, vt - 22];
+    const pAct = vssBottom ? [vt - 52, vt - 22] : [vb + 22, vb + 52];
+    // cell boundaries in gate indices; gate k is at x = 24 + 48k. Row 0 reserves [-2, 1] for the NAND2.
+    const kmin = Math.floor((-XE - 24) / CPP), kmax = Math.ceil((XE - 24) / CPP);
+    const bounds = [];
+    if (r === 0) {
+      let k = -2; bounds.push(k);
+      while (k > kmin) { k -= 2 + Math.floor(R(0, 5)); bounds.unshift(Math.max(k, kmin)); }
+      k = 1; bounds.push(k);
+      while (k < kmax) { k += 2 + Math.floor(R(0, 5)); bounds.push(Math.min(k, kmax)); }
+    } else {
+      let k = kmin; bounds.push(k);
+      while (k < kmax) { k += 2 + Math.floor(R(0, 5)); bounds.push(Math.min(k, kmax)); }
+    }
+    const isNand = (k0, k1) => r === 0 && k0 === -2 && k1 === 1;
+    for (let b = 0; b < bounds.length - 1; b++) {
+      const k0 = bounds[b], k1 = bounds[b + 1];
+      const nand = isNand(k0, k1);
+      for (let g = k0; g <= k1; g++) {
+        const x = 24 + CPP * g;
+        const dummy = (g === k0 || g === k1);
+        if (dummy && g === k1 && b < bounds.length - 2) continue;       // shared boundary gate drawn once
+        bx(dummy ? M.dummy : (nand ? M.acc : M.gate), x - 7.5, x + 7.5, vb + 12, vt - 12, 0, 55);
+      }
+      for (let g = k0; g < k1; g++) {
+        const xa = 24 + CPP * g + 11, xb = 24 + CPP * (g + 1) - 11;
+        for (const act of [nAct, pAct]) bx(M.epi, xa, xb, act[0] - 3, act[1] + 3, 0, 44);
+        if (nand) continue;
+        const xc = 24 + CPP * g + 24;
+        for (const act of [nAct, pAct]) {
+          if (rng() < 0.55) {
+            const toRail = rng() < 0.4;
+            const rail = (act === nAct) === vssBottom ? vb : vt;
+            const v0 = toRail ? Math.min(rail, act[0]) : act[0], v1 = toRail ? Math.max(rail, act[1]) : act[1];
+            bx(M.ts, xc - 7, xc + 7, v0, v1, 44, 60);
+          }
+        }
+      }
+      if (nand) continue;
+      if (rng() < 0.6) { const g = k0 + 1 + Math.floor(R(0, k1 - k0 - 1)); const x = 24 + CPP * g; const tv = vb + 24 * (1 + Math.floor(R(0, 5))); bx(M.cb, x - 7, x + 7, tv - 7, tv + 7, 55, 70); }
+    }
+    // M0 rails and signal-track segments
+    bx(M.rail, -XE, XE, vb - 12, vb + 12, 70, 90);
+    if (r === rows[1]) bx(M.rail, -XE, XE, vt - 12, vt + 12, 70, 90);
+    for (let t = 1; t <= 5; t++) {
+      const tv = vb + 24 * t;
+      let x = -XE + R(0, 80);
+      while (x < XE) {
+        const L = R(1, 5) * CPP, gap = R(0.4, 2) * CPP;
+        const inNand = r === 0 && x + L > -80 && x < 80;
+        if (!inNand && rng() < 0.4) { bx(M.m0, x, Math.min(XE, x + L), tv - 6, tv + 6, 70, 90); if (rng() < 0.3) bx(M.v0, x + 10, x + 22, tv - 6, tv + 6, 64, 70); }
+        x += L + gap;
+      }
+    }
+  }
+  // NAND2 wiring (row 0: VSS at v = 0, VDD at v = 144; n active 22-52, p active 92-122)
+  bx(M.ts, -55, -41, 92, 144, 44, 64);    // p-left  -> VDD
+  bx(M.ts, 41, 55, 92, 144, 44, 64);      // p-right -> VDD
+  bx(M.ts, -7, 7, 66, 122, 44, 64);       // p-mid   -> Y
+  bx(M.ts, -55, -41, 0, 52, 44, 64);      // n-left  -> VSS
+  bx(M.ts, 41, 55, 22, 78, 44, 64);       // n-right -> Y   (n-mid is the internal series node: no contact)
+  bx(M.m0, -8, 56, 66, 78, 70, 90);       // Y
+  bx(M.v0, -6, 6, 66, 78, 64, 70); bx(M.v0, 42, 54, 66, 78, 64, 70);
+  bx(M.m0, -40, -8, 90, 102, 70, 90);     // A pin
+  bx(M.cb, -31, -17, 89, 103, 55, 70);
+  bx(M.m0, 8, 40, 42, 54, 70, 90);        // B pin
+  bx(M.cb, 17, 31, 41, 55, 55, 70);
+
+  const mat = (c, extra = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0.15, ...extra });
+  scene.add(instanced(box, mat(0x9c9c9c), M.gate));
+  scene.add(instanced(box, mat(0x5e5e5e), M.dummy));
+  scene.add(instanced(box, mat(0xc6c6c6), M.epi));
+  scene.add(instanced(box, mat(0xdcdcdc, { metalness: 0.4 }), M.ts));
+  scene.add(instanced(box, mat(0xe6e6e6, { metalness: 0.4 }), M.v0));
+  scene.add(instanced(box, mat(0xb4b4b4, { metalness: 0.35 }), M.m0));
+  scene.add(instanced(box, mat(0xbdbdbd, { metalness: 0.35 }), M.rail));
+  scene.add(instanced(box, mat(0xd0d0d0, { metalness: 0.4 }), M.cb));
+  scene.add(instanced(box, mat(new THREE.Color(0.14, 0.82, 0.38), { emissive: new THREE.Color(0.02, 0.22, 0.08) }), M.acc));
+  const sub = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), mat(0x2c2c2c, { roughness: 0.9 }));
+  sub.rotation.x = -Math.PI / 2; scene.add(sub);
+  // NAND2 outline
+  const pts = [[-72, 0], [72, 0], [72, 144], [-72, 144], [-72, 0]].map(([x, v]) => V3(x, 96, -v));
+  const outline = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: new THREE.Color(0.2, 1.3, 0.55) }));
+  scene.add(outline);
+  CELLS.outline = outline;
+
+  const L = (pos, text, small, dx, dy, o = {}) => addLabel({ level: 3, pos, text, small, jc: 7.0, jw: 0.3, dx, dy, ...o });
+  L(V3(-110, 90, -144), 'VDD', 'power rail', -40, -26, { wide: true });
+  L(V3(-110, 90, 0), 'VSS', 'ground rail', -40, 26, { wide: true });
+  L(V3(-24, 70, -96), 'A', null, -34, -34, { acc: true });
+  L(V3(24, 70, -48), 'B', null, 34, 34, { acc: true });
+  L(V3(56, 90, -72), 'Y', 'output', 70, 26);
+  L(V3(0, 44, -107), 'pMOS × 2', 'in parallel (pull-up)', 110, -96);
+  L(V3(-24, 44, -37), 'nMOS × 2', 'in series (pull-down)', -120, 70);
+};
+CELLS.update = function (J, W, time) {
+  const cam = CELLS.camera;
+  const w = W / CELLS.unit;
+  const T = V3(24, 80, -72).lerp(V3(0, 30, -72), sm(6.6, 7.0, J)).lerp(V3(-24, 25, -107), sm(7.05, 7.6, J));
+  const az = chan([[6.6, 0], [7.0, -28], [7.5, -40], [7.8, -45]], J);
+  const el = chan([[6.6, 34], [7.0, 60], [7.5, 38], [7.8, 30]], J);
+  const drift = SWAY * Math.sin(time * 0.11) * 1.5 * bump(6.7, 6.9, 7.1, 7.3, J);
+  placeCamera(cam, T, az + drift, el, distForWidth(cam, w));
+  cam.updateProjectionMatrix();
+};
+
+// ---------------------------------------------------------------------------
+// GAA level (nanometres): one nanosheet FET, quarter cutaway. Generic dims:
+// three 30 x 5 nm Si sheets (8 nm apart), Lg = 15 nm, IL 0.7 nm, HfO2 1.8 nm,
+// 5 nm inner spacers. x = channel, y = up, z = sheet width. Origin = gate
+// centre at the substrate top, aligned with gate A of the NAND2 (p active).
+// The octant x < 0, z > 0 is removed so both cut faces are visible.
+// ---------------------------------------------------------------------------
+const SHEETS = [[8, 13], [21, 26], [34, 39]];
+const GAA = { key: 'gaa', unit: 1e-9, sem: true, clear: 0x000000, built: false };
+LEVELS[4] = GAA;
+function cutBoxes(x0, x1, y0, y1, z0, z1) {
+  const out = [];
+  if (x1 > 0) out.push([Math.max(x0, 0), x1, y0, y1, z0, z1]);
+  if (x0 < 0 && z0 < 0) out.push([x0, Math.min(x1, 0), y0, y1, z0, Math.min(z1, 0)]);
+  return out.filter(b => b[1] - b[0] > 1e-6 && b[5] - b[4] > 1e-6);
+}
+GAA.build = function () {
+  const scene = GAA.scene = new THREE.Scene();
+  GAA.camera = newCamera();
+  GAA.camera.fov = 22;
+  scene.add(new THREE.HemisphereLight(0xeef2f6, 0x1c1c1c, 0.5));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(-4, 6, 5); scene.add(key);
+  const groups = {};
+  const put = (name, x0, x1, y0, y1, z0, z1) => {
+    (groups[name] ||= []).push(...cutBoxes(x0, x1, y0, y1, z0, z1).map(b => trs((b[0] + b[1]) / 2, (b[2] + b[3]) / 2, (b[4] + b[5]) / 2, b[1] - b[0], b[3] - b[2], b[5] - b[4])));
+  };
+  // substrate, sub-fin, shallow-trench isolation
+  put('sub', -34, 34, -14, -4, -32, 32);
+  put('sub', -34, 34, -4, 3, -15, 15);
+  put('sti', -34, 34, -4, 3, -32, -15); put('sti', -34, 34, -4, 3, 15, 32);
+  // sheets (middle one is the accent: we zoom into it next)
+  SHEETS.forEach(([a, b], i) => put(i === 1 ? 'acc' : 'si', -12.5, 12.5, a, b, -15, 15));
+  // gate region |x| < 7.5: IL, HfO2 shells, then gate metal
+  const G = 7.5, IL = 0.7, HK = 2.5;
+  for (const [a, b] of SHEETS) {
+    put('il', -G, G, b, b + IL, -15, 15); put('il', -G, G, a - IL, a, -15, 15);
+    put('il', -G, G, a - IL, b + IL, 15, 15 + IL); put('il', -G, G, a - IL, b + IL, -15 - IL, -15);
+    put('hk', -G, G, b + IL, b + HK, -15 - IL, 15 + IL); put('hk', -G, G, a - HK, a - IL, -15 - IL, 15 + IL);
+    put('hk', -G, G, a - HK, b + HK, 15 + IL, 15 + HK); put('hk', -G, G, a - HK, b + HK, -15 - HK, -15 - IL);
+  }
+  put('gate', -G, G, 3, 55, 15 + HK, 25); put('gate', -G, G, 3, 55, -25, -15 - HK);
+  const gaps = [[3, SHEETS[0][0] - HK], [SHEETS[0][1] + HK, SHEETS[1][0] - HK], [SHEETS[1][1] + HK, SHEETS[2][0] - HK], [SHEETS[2][1] + HK, 55]];
+  for (const [a, b] of gaps) put('gate', -G, G, a, b, -15 - HK, 15 + HK);
+  put('cap', -G, G, 55, 58, -25, 25);
+  // inner and outer spacers
+  for (const s of [-1, 1]) {
+    const xa = s < 0 ? -12.5 : G, xb = s < 0 ? -G : 12.5;
+    for (const [a, b] of [[3, 8], [13, 21], [26, 34]]) put('spacer', xa, xb, a, b, -15, 15);
+    put('spacer', xa, xb, 39, 58, -25, 25);
+    put('spacer', xa, xb, 3, 39, 15, 25); put('spacer', xa, xb, 3, 39, -25, -15);
+    // source / drain epitaxy (faceted: stepped top) and contacts
+    const ea = s < 0 ? -32 : 12.5, eb = s < 0 ? -12.5 : 32;
+    put('epi', ea, eb, 3, 44, -17, 17);
+    put('epi', ea + (s < 0 ? 3 : 0), eb - (s < 0 ? 0 : 3), 44, 48, -11, 11);
+    put('epi', ea, eb, 3, 36, -20, -17); put('epi', ea, eb, 3, 36, 17, 20);
+    const ca = s < 0 ? -28 : 16, cb = s < 0 ? -16 : 28;
+    put('sil', ca, cb, 48, 50, -11, 11);
+    put('contact', ca, cb, 50, 72, -11, 11);
+  }
+  put('contact', -5, 5, 58, 72, -20, -10);         // gate contact
+  const col = {
+    sub: 0x6a6e74, sti: 0x3e4247, si: 0xbfc3ca, il: 0x4c5158, hk: 0xf2f2f2, gate: 0x7d8189, cap: 0x52565c,
+    spacer: 0x383c42, epi: 0xa7aeb6, sil: 0x9a8f86, contact: 0xd6dadf,
+  };
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  for (const k in groups) {
+    const mat = k === 'acc'
+      ? new THREE.MeshStandardMaterial({ color: new THREE.Color(0.18, 0.86, 0.42), emissive: new THREE.Color(0.02, 0.2, 0.08), roughness: 0.45 })
+      : new THREE.MeshStandardMaterial({ color: col[k], roughness: k === 'contact' ? 0.35 : 0.6, metalness: k === 'contact' || k === 'gate' ? 0.35 : 0.05 });
+    scene.add(instanced(box, mat, groups[k]));
+  }
+  const L = (pos, text, small, dx, dy, o = {}) => addLabel({ level: 4, pos, text, small, jc: 8.0, jw: 0.32, dx, dy, ...o });
+  L(V3(0, 36.5, 9), 'Si nanosheets × 3', '~5 nm thick each', 90, -80, { acc: true });
+  L(V3(0, 45, 22), 'Gate', 'wraps all four sides', 80, 50);
+  L(V3(-10, 17, 0), 'Inner spacer', null, -90, -40);
+  L(V3(-24, 30, 0), 'Source / drain epi', null, -70, -100);
+  L(V3(22, 72, -6), 'Contact', null, 70, -40);
+  L(V3(0, 58, -18), 'Gate length ~15 nm', null, -60, -70, { wide: true });
+};
+GAA.update = function (J, W, time) {
+  const cam = GAA.camera;
+  const w = W / GAA.unit;
+  const T = V3(0, 25, 0).lerp(V3(-3, 25, 3), sm(7.62, 8.0, J)).lerp(V3(0, 23.5, 7.5), sm(8.05, 8.6, J));
+  const az = chan([[7.62, -45], [8.0, -40], [8.35, -70], [8.6, -90]], J);
+  const el = chan([[7.62, 30], [8.0, 32], [8.35, 12], [8.6, 0]], J);
+  const drift = SWAY * Math.sin(time * 0.12) * 2.0 * bump(7.8, 7.95, 8.05, 8.25, J);
+  placeCamera(cam, T, az + drift, el, distForWidth(cam, w));
+  cam.updateProjectionMatrix();
+};
+
+// ---------------------------------------------------------------------------
+// ATOMIC level (ångström): cross-section through the middle nanosheet.
+// Scene axes: X = [-110]/√2 (sheet width), Y = [001] (sheet normal), Z = [110]/√2
+// (channel direction, towards the camera). Viewing along [110] shows dumbbells.
+// Si sheet: 37 atomic (004) planes, |Y| <= 18 × a/4. Then SiO2 IL, HfO2, TiN.
+// STEM: additive Gaussian blobs (column intensity sums like HAADF, ~Z-weighted,
+// compressed for display). MODEL: ball-and-stick cluster around the origin atom.
+// ---------------------------------------------------------------------------
+const A_SI = 5.431, BOND = A_SI * Math.sqrt(3) / 4;   // 2.352 Å
+const ATOM = { key: 'atomic', unit: 1e-10, sem: false, clear: 0x000000, built: false };
+LEVELS[5] = ATOM;
+function crystalToScene(cx, cy, cz) {
+  return V3(A_SI * (-cx + cy) / Math.SQRT2, A_SI * cz, A_SI * (cx + cy) / Math.SQRT2);
+}
+function siLattice(xr, yr, zr) {
+  const out = [];
+  const fcc = [[0, 0, 0], [0, .5, .5], [.5, 0, .5], [.5, .5, 0]];
+  const n = Math.ceil((Math.max(Math.abs(xr[0]), Math.abs(xr[1])) + Math.abs(zr[1]) + 4) * Math.SQRT2 / A_SI) + 1;
+  const nz = Math.ceil(Math.max(Math.abs(yr[0]), Math.abs(yr[1])) / A_SI) + 1;
+  for (let i = -n; i <= n; i++) for (let j = -n; j <= n; j++) for (let k = -nz; k <= nz; k++) {
+    for (const f of fcc) for (const d of [0, 0.25]) {
+      const p = crystalToScene(i + f[0] + d, j + f[1] + d, k + f[2] + d);
+      if (p.x >= xr[0] && p.x <= xr[1] && p.y >= yr[0] && p.y <= yr[1] && p.z >= zr[0] && p.z <= zr[1]) out.push(p);
+    }
+  }
+  return out;
+}
+function amorphous(rng, density, xr, yr, zr) {
+  const s = Math.cbrt(1 / density), out = [];
+  for (let x = xr[0] + s / 2; x < xr[1]; x += s) for (let y = yr[0] + s / 2; y < yr[1]; y += s) for (let z = zr[0] + s / 2; z < zr[1]; z += s)
+    out.push(V3(x + (rng() - 0.5) * s * 0.85, y + (rng() - 0.5) * s * 0.85, z + (rng() - 0.5) * s * 0.85));
+  return out;
+}
+function rockSalt(a, rot, xr, yr, zr) {
+  const out = { ti: [], n: [] };
+  const fcc = [[0, 0, 0], [0, .5, .5], [.5, 0, .5], [.5, .5, 0]];
+  const c = Math.cos(rot), s = Math.sin(rot);
+  const R = Math.max(Math.abs(xr[0]), Math.abs(xr[1]), Math.abs(yr[0]), Math.abs(yr[1])) / a + 2;
+  const nzz = Math.ceil(Math.abs(zr[1]) / a) + 1;
+  for (let i = -R; i <= R; i++) for (let j = -R; j <= R; j++) for (let k = -nzz; k <= nzz; k++) for (const f of fcc) {
+    for (const [arr, off] of [[out.ti, 0], [out.n, 0.5]]) {
+      const lx = (i + f[0] + off) * a, ly = (j + f[1]) * a, lz = (k + f[2]) * a;
+      const p = V3(lx * c - ly * s, lx * s + ly * c, lz);
+      if (p.x >= xr[0] && p.x <= xr[1] && p.y >= yr[0] && p.y <= yr[1] && p.z >= zr[0] && p.z <= zr[1]) arr.push(p);
+    }
+  }
+  return out;
+}
+
+ATOM.build = function () {
+  const scene = ATOM.scene = new THREE.Scene();
+  ATOM.camera = newCamera();
+  const rng = mulberry32(1107);
+  const zd = LOW ? 4 : 8, zt = LOW ? 2.5 : 4;
+  const list = [];   // [pos, intensity, size, accent]
+  const push = (pts, I, S) => pts.forEach(p => list.push([p, I, S, 0]));
+  const PL = 18 * A_SI / 4 + 0.05;                     // 37 planes: -18..18
+  const si = siLattice([-130, 78], [-PL, PL], [-zd, zd]);
+  si.forEach(p => list.push([p, 1.0, 1.0, p.lengthSq() < 1e-4 ? 1 : 0]));
+  for (const s of [1, -1]) {
+    const yr = a => (s > 0 ? [a[0], a[1]] : [-a[1], -a[0]]);
+    push(amorphous(rng, 0.022, [-130, 85], yr([26, 32]), [-zd, zd]), 0.7, 0.95);     // SiO2: Si
+    push(amorphous(rng, 0.044, [-130, 85], yr([26, 32]), [-zd, zd]), 0.32, 0.8);     // SiO2: O
+    push(amorphous(rng, 0.0277, [-130, 103], yr([32, 50]), [-zd, zd]), 2.6, 1.2);    // HfO2: Hf
+    push(amorphous(rng, 0.055, [-130, 103], yr([32, 50]), [-zd, zd]), 0.32, 0.8);    // HfO2: O
+    const tin = rockSalt(4.24, 0.21, [-130, 135], yr([50, 90]), [-zt, zt]);
+    push(tin.ti, 1.35, 1.05); push(tin.n, 0.3, 0.8);
+  }
+  push(amorphous(rng, 0.022, [78.5, 85], [-26, 26], [-zd, zd]), 0.7, 0.95);          // side wall wrap
+  push(amorphous(rng, 0.044, [78.5, 85], [-26, 26], [-zd, zd]), 0.32, 0.8);
+  push(amorphous(rng, 0.0277, [85, 103], [-32, 32], [-zd, zd]), 2.6, 1.2);
+  push(amorphous(rng, 0.055, [85, 103], [-32, 32], [-zd, zd]), 0.32, 0.8);
+  const tinS = rockSalt(4.24, 0.21, [103, 135], [-50, 50], [-zt, zt]);
+  push(tinS.ti, 1.35, 1.05); push(tinS.n, 0.3, 0.8);
+
+  const N = list.length;
+  const geo = new THREE.PlaneGeometry(2, 2);
+  const aI = new Float32Array(N), aS = new Float32Array(N), aA = new Float32Array(N);
+  const mesh = new THREE.InstancedMesh(geo, null, N);
+  const m = new THREE.Matrix4();
+  list.forEach(([p, I, S, A], i) => { m.makeTranslation(p.x, p.y, p.z); mesh.setMatrixAt(i, m); aI[i] = I; aS[i] = S; aA[i] = A; });
+  geo.setAttribute('aI', new THREE.InstancedBufferAttribute(aI, 1));
+  geo.setAttribute('aS', new THREE.InstancedBufferAttribute(aS, 1));
+  geo.setAttribute('aA', new THREE.InstancedBufferAttribute(aA, 1));
+  mesh.material = new THREE.ShaderMaterial({
+    uniforms: { uOpacity: { value: 1 }, uGain: { value: 0.26 }, uAcc: { value: 0 } },
+    vertexShader: /* glsl */`
+      attribute float aI; attribute float aS; attribute float aA;
+      varying vec2 vUv; varying float vI; varying float vA;
+      void main() {
+        vec4 mv = modelViewMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+        mv.xy += position.xy * aS * 0.78;
+        gl_Position = projectionMatrix * mv;
+        vUv = position.xy; vI = aI; vA = aA;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform float uOpacity, uGain, uAcc;
+      varying vec2 vUv; varying float vI; varying float vA;
+      void main() {
+        float g = exp(-dot(vUv, vUv) * 4.5);
+        vec3 c = vec3(vI * g * uGain * uOpacity);
+        c = mix(c, c * vec3(0.35, 1.6, 0.7) * 1.4, vA * uAcc);
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+  });
+  mesh.frustumCulled = false;
+  scene.add(mesh);
+  ATOM.sprites = mesh;
+
+  // Ball-and-stick cluster: origin atom, 4 neighbours (2.352 Å), 12 second-shell atoms, stubs beyond
+  const model = new THREE.Group();
+  scene.add(model);
+  ATOM.model = model;
+  scene.add(new THREE.HemisphereLight(0xeef3f8, 0x1a1c1f, 1.3));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(3, 5, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x9fb8ff, 1.0); rim.position.set(-6, -2, -4); scene.add(rim);
+  const all = siLattice([-9, 9], [-9, 9], [-9, 9]);
+  const shell1 = all.filter(p => { const d = p.length(); return d > 0.1 && d < 2.5; });
+  const shell2 = all.filter(p => { const d = p.length(); return d > 3.0 && d < 4.0; });
+  const mats = [];
+  const mk = (color, emissive) => { const mt = new THREE.MeshStandardMaterial({ color, emissive: emissive || 0x000000, roughness: 0.32, metalness: 0.08, transparent: true, opacity: 0 }); mats.push(mt); return mt; };
+  const centreMat = mk(new THREE.Color(0.2, 0.86, 0.46), new THREE.Color(0.03, 0.3, 0.12));
+  const n1Mat = mk(0xd3d8de), n2Mat = mk(0x6f767e), stickMat = mk(0x9aa1a9), stubMat = mk(0x4c535a);
+  const sph = new THREE.SphereGeometry(1, 40, 28);
+  const addAtom = (p, r, mt) => { const s = new THREE.Mesh(sph, mt); s.position.copy(p); s.scale.setScalar(r); model.add(s); };
+  addAtom(V3(0, 0, 0), 0.5, centreMat);
+  shell1.forEach(p => addAtom(p, 0.42, n1Mat));
+  shell2.forEach(p => addAtom(p, 0.28, n2Mat));
+  const cyl = new THREE.CylinderGeometry(1, 1, 1, 20);
+  const stick = (a, b, r, mt, frac = 1) => {
+    const d = b.clone().sub(a), L = d.length() * frac;
+    const s = new THREE.Mesh(cyl, mt);
+    s.scale.set(r, L, r);
+    s.position.copy(a).addScaledVector(d.normalize(), L / 2);
+    s.quaternion.setFromUnitVectors(V3(0, 1, 0), d);
+    model.add(s);
+  };
+  const inCluster = [V3(0, 0, 0), ...shell1, ...shell2];
+  for (let i = 0; i < inCluster.length; i++) for (let j = i + 1; j < inCluster.length; j++) {
+    if (Math.abs(inCluster[i].distanceTo(inCluster[j]) - BOND) < 0.05) stick(inCluster[i], inCluster[j], 0.1, stickMat);
+  }
+  shell2.forEach(p => all.forEach(q => {
+    if (Math.abs(p.distanceTo(q) - BOND) < 0.05 && !inCluster.some(c => c.distanceTo(q) < 0.05)) stick(p, q, 0.08, stubMat, 0.42);
+  }));
+  ATOM.modelMats = mats;
+  // 109.5° arc between the two lower bonds, bond-length marker on an upper bond
+  const lower = shell1.filter(p => p.y < 0).sort((a, b) => a.x - b.x);
+  const upper = shell1.filter(p => p.y > 0).sort((a, b) => b.z - a.z);
+  const u1 = lower[0].clone().normalize(), u2 = lower[1].clone().normalize();
+  const arcPts = [];
+  for (let i = 0; i <= 32; i++) {
+    const t = i / 32, ang = Math.acos(clamp(u1.dot(u2), -1, 1));
+    const v = u1.clone().multiplyScalar(Math.sin((1 - t) * ang)).addScaledVector(u2, Math.sin(t * ang)).divideScalar(Math.sin(ang));
+    arcPts.push(v.multiplyScalar(0.95));
+  }
+  const arcMat = new THREE.LineBasicMaterial({ color: 0xe8ebee, transparent: true, opacity: 0 });
+  mats.push(arcMat);
+  model.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(arcPts), arcMat));
+  const arcMid = arcPts[16].clone().multiplyScalar(1.02);
+  addLabel({ level: 5, pos: arcMid, text: '109.5°', small: 'tetrahedral angle', jc: 11, jw: 0.3, dx: 40, dy: 60 });
+  addLabel({ level: 5, pos: upper[0].clone().multiplyScalar(0.5), text: '0.235 nm', small: 'Si–Si bond', jc: 11, jw: 0.3, dx: -70, dy: -60 });
+  addLabel({ level: 5, pos: V3(0, 0, 0), text: 'Si', small: 'the atom we followed', jc: 11, jw: 0.3, dx: 64, dy: -40, acc: true });
+  // gate-stack layer labels (stop 10) and dumbbell label (stop 11)
+  const GL = (y, t, s, left) => addLabel({ level: 5, pos: V3(left ? -24 : 20, y, 0), text: t, small: s, jc: 9.0, jw: 0.32, dx: left ? -70 : 70, dy: 0, wide: true });
+  GL(10, 'Si channel', 'crystalline, viewed along [110]');
+  GL(29, 'SiO₂ interlayer', '~0.7 nm, amorphous');
+  GL(41, 'HfO₂ high-k', '~1.8 nm, heavy Hf atoms bright', true);
+  GL(56, 'TiN', 'work-function metal', true);
+  addLabel({ level: 5, pos: V3(A_SI / Math.SQRT2 / 2 + 1.92, 0.68, 0), text: 'Dumbbell', small: 'two atoms 0.136 nm apart', jc: 10, jw: 0.28, dx: 80, dy: -54 });
+};
+ATOM.update = function (J, W, time) {
+  const cam = ATOM.camera;
+  const w = W / ATOM.unit;
+  const cy = chan([[8.62, 0], [9.0, 28], [9.12, 28], [9.9, 0]], J);
+  cam.fov = lerp(4, 17, sm(10.08, 10.7, J));        // projection-like for STEM, perspective for the model
+  const az = chan([[10.1, 0], [10.75, 38]], J) + SWAY * Math.sin(time * 0.15) * 3 * sm(10.9, 11, J);
+  const el = chan([[10.1, 0], [10.75, 22]], J) + SWAY * Math.sin(time * 0.11 + 1) * 1.5 * sm(10.9, 11, J);
+  placeCamera(cam, V3(0, cy, 0), az, el, distForWidth(cam, w));
+  const end = ATOM.endShift || 0;
+  if (end > 0.001) {
+    const narrow = innerWidth < 720;
+    cam.setViewOffset(innerWidth, innerHeight, narrow ? 0 : end * 0.16 * innerWidth, narrow ? end * 0.2 * innerHeight : 0, innerWidth, innerHeight);
+  } else cam.clearViewOffset();
+  cam.updateProjectionMatrix();
+  const model = sm(10.3, 10.75, J);
+  ATOM.sprites.material.uniforms.uOpacity.value = lerp(1, 0.14, model);
+  ATOM.sprites.material.uniforms.uAcc.value = sm(9.5, 9.9, J);
+  ATOM.model.visible = model > 0.01;
+  for (const mt of ATOM.modelMats) { mt.opacity = model; mt.transparent = model < 0.995; mt.depthWrite = model > 0.5; }
+};
+
+// ---- variant C ----
+// Variant C, "One Take": one continuous move. Big stop counter, journey progress line,
+// motion blur while travelling, captions that slide with the direction of travel.
+{
+  const cNum = document.getElementById('cNum'), pFill = document.getElementById('pFill'), pTicks = document.getElementById('pTicks');
+  for (let i = 0; i < NSTOP; i++) { const t = document.createElement('div'); t.className = 't'; t.style.top = (i / JMAX * 100) + '%'; pTicks.appendChild(t); }
+  let lastIdx = -1, lastJ = 0;
+  FRAME_HOOKS.push((J) => {
+    const i = Math.round(J);
+    if (i !== lastIdx) {
+      capInner.dataset.dir = i < lastIdx ? 'up' : 'down';
+      cNum.textContent = String(i + 1).padStart(2, '0');
+      lastIdx = i;
+    }
+    pFill.style.height = (J / JMAX * 100).toFixed(2) + '%';
+    lastJ = J;
+  });
+}
+// Keep gate-stack labels on the right: the stop counter owns the top-left corner in this variant.
+for (const L of LABELS) {
+  const t = L.el.firstChild && L.el.firstChild.textContent;
+  if (t === 'TiN' || t === 'HfO₂ high-k') { L.pos = L.pos.clone(); L.pos.x = 20; L.dx = 70; }
+}
+
+// ---------------------------------------------------------------------------
+// Main loop
+// ---------------------------------------------------------------------------
+let time = 0, last = 0, endT = 0, endOn = false;
+const perf = { acc: 0, n: 0, cool: 0, good: 0 };
+window.__fab = { J: 0, ready: false };
+// Benchmark hook: render n frames at journey position j on the real GPU, return ms per frame.
+window.__fab.bench = (j, n = 20) => {
+  const J0 = J, gl = renderer.getContext(), px = new Uint8Array(4);
+  const sync = () => { renderer.setRenderTarget(null); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); };
+  J = j; renderScene(1 / 60); sync();
+  const t0 = performance.now();
+  for (let i = 0; i < n; i++) { renderScene(1 / 60); sync(); }
+  const ms = (performance.now() - t0) / n;
+  J = J0;
+  return +ms.toFixed(2);
+};
+
+const needsNormals = L => L.sem || (CFG.normalsAll && L !== LEVELS[0]);
+function renderLevel(L, slot) {
+  renderer.setRenderTarget(slotRT[slot]);
+  renderer.setClearColor(L.clear, 1);
+  renderer.clear();
+  renderer.render(L.scene, L.camera);
+  if (needsNormals(L)) {
+    renderer.setRenderTarget(normalRT[slot]);
+    renderer.setClearColor(0x000000, 0);
+    renderer.clear();
+    L.scene.overrideMaterial = normalMat;
+    if (L.sprites) L.sprites.visible = false;          // STEM blobs are billboards, not surfaces
+    renderer.render(L.scene, L.camera);
+    if (L.sprites) L.sprites.visible = true;
+    L.scene.overrideMaterial = null;
+  }
+}
+
+function adaptResolution(dt) {
+  if (PIN !== null) return;
+  perf.acc += dt; perf.n++; perf.cool -= dt;
+  if (perf.n < 45) return;
+  const avg = perf.acc / perf.n; perf.acc = 0; perf.n = 0;
+  if (perf.cool > 0) return;
+  if (avg > 1 / 42 && renderScale > 0.55) { renderScale = Math.max(0.55, renderScale * 0.85); resize(); perf.cool = 2.5; perf.good = 0; }
+  else if (avg < 1 / 57) { perf.good += 1; if (perf.good > 6 && renderScale < 1) { renderScale = Math.min(1, renderScale / 0.85); resize(); perf.cool = 4; perf.good = 0; } }
+}
+
+function renderScene(dt) {
+  const W = widthAt(J);
+  const act = activeLevels(J);
+  ensureBuilt(act.A); if (act.B >= 0) ensureBuilt(act.B);
+  const LA = LEVELS[act.A], LB = act.B >= 0 ? LEVELS[act.B] : null;
+  if (act.A !== 0) { FX.flare = 0; FX.distort = 0; FX.dof = 0; }
+  if (act.A !== 1 && act.B !== 1) FX.vig = 9;
+  LA.update(J, W, time, dt);
+  if (LB) LB.update(J, W, time, dt);
+
+  renderLevel(LA, 0);
+  if (LB) renderLevel(LB, 1);
+
+  const modes = modeWeights(J);
+  U.tA.value = slotRT[0].texture;
+  U.tB.value = LB ? slotRT[1].texture : slotRT[0].texture;
+  U.tNA.value = normalRT[0].texture;
+  U.tNB.value = normalRT[1].texture;
+  U.hasNA.value = needsNormals(LA) ? 1 : 0;
+  U.hasNB.value = LB && needsNormals(LB) ? 1 : 0;
+  U.outline.value = CFG.outline; U.semMix.value = CFG.semMix; U.stemMix.value = CFG.stemMix;
+  U.motion.value = SWAY ? clamp(Math.abs(Jv) * CFG.motionBlur, 0, 0.02) : 0;
+  U.tDepth.value = slotRT[0].depthTexture;
+  U.mixAB.value = LB ? act.f : 0;
+  U.wCam.value = modes.cam; U.wOpt.value = modes.opt; U.wSem.value = modes.sem; U.wStem.value = modes.stem; U.wModel.value = modes.model;
+  U.flare.value = FX.flare; U.distort.value = FX.distort; U.vigR.value = FX.vig ?? 9;
+  U.dofAmt.value = act.A === 0 && slotRT[0].depthTexture ? FX.dof * (1 - U.mixAB.value) : 0;
+  U.focusDist.value = FX.focus; U.camNear.value = LA.camera.near; U.camFar.value = LA.camera.far;
+  U.time.value = time; U.jitter.value = REDUCED ? 0.3 : 1; U.grain.value = 1;
+  bloomPass.strength = 0.55 * modes.cam + 0.28 * modes.opt + 0.1 * modes.sem + 0.3 * modes.stem + 0.32 * modes.model;
+  composer.render(dt);
+  return { W, act, modes };
+}
+
+let testFrames = 0;
+function frame(now) {
+  // Test mode (?j=): fixed timestep and a bounded number of frames, for screenshots.
+  if (PIN === null || ++testFrames < 36) requestAnimationFrame(frame);
+  const dt = PIN !== null ? 1 / 30 : clamp((now - last) / 1000, 0, 0.1); last = now;
+  time += dt;
+  stepSpring(dt);
+  const { W, act, modes } = renderScene(dt);
+
+  updateHUD(J, W, modes);
+  setCaption(Math.round(J), false);
+  opening.classList.toggle('gone', J > 0.04 || Jt > 0.03);
+  if (PIN === null) updateHash();
+  endT = J > 10.9 ? endT + dt : 0;
+  const show = endT > (PIN !== null ? 0 : REDUCED ? 0.2 : 0.9);
+  if (show !== endOn) {
+    endOn = show;
+    endcard.classList.toggle('show', show);
+    document.body.classList.toggle('ended', show);
+    if (show) endcard.removeAttribute('inert'); else endcard.setAttribute('inert', '');
+  }
+  ATOM.endShift = lerp(ATOM.endShift || 0, show ? 1 : 0, 1 - Math.exp(-dt * 2.5));
+  updateLabels(J, act);
+  for (const h of FRAME_HOOKS) h(J, W, modes, act, dt);
+  adaptResolution(dt);
+  if (Q.has('debug')) document.title = `test f=${testFrames} endT=${endT.toFixed(2)} show=${endOn}`;
+  window.__fab.J = J;
+  window.__fab.ready = true;
+}
+
+// Build levels near the current one while the browser is idle
+function idleBuild() {
+  const { A } = activeLevels(J);
+  for (const i of [A + 1, A, A - 1, A + 2]) {
+    if (i >= 0 && i < LEVELS.length && !LEVELS[i].built) { ensureBuilt(i); break; }
+  }
+  const next = () => idleBuild();
+  if ('requestIdleCallback' in window) requestIdleCallback(next, { timeout: 1500 }); else setTimeout(next, 400);
+}
+
+function boot() {
+  resize();
+  const hi = STOPS.findIndex(s => '#' + s.id === location.hash);
+  if (PIN !== null) { J = Jt = PIN; }
+  else if (hi >= 0) { scrollTo(0, sections[hi].offsetTop); readScroll(); J = Jt = hi; hashIdx = hi; }
+  else { scrollTo(0, 0); readScroll(); J = Jt; }
+  setCaption(Math.round(J), true);
+  if (J > 0.04) {                       // deep link: no opening title fade
+    opening.style.transition = 'none';
+    opening.classList.add('gone');
+    requestAnimationFrame(() => requestAnimationFrame(() => { opening.style.transition = ''; }));
+  }
+  requestAnimationFrame(t => { last = t; frame(t); setTimeout(idleBuild, 600); });
+}
+boot();
+</script>
+<script>
+  // No WebGL: hide the 3D parts and keep the first-frame text and buttons on plain dark.
+  (function () {
+    var c = document.createElement('canvas');
+    if (!(c.getContext('webgl2') || c.getContext('webgl'))) document.documentElement.classList.add('nogl');
+  })();
+</script>
 </body>
 </html>

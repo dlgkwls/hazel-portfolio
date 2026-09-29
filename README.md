@@ -7,7 +7,7 @@ A static site. To preview it, double-click a page. `portfolio.html` is the new h
 | Page | File |
 |---|---|
 | Portfolio hub | `portfolio.html` |
-| Home | `index.html` |
+| Front door (Fab-to-Atom tour) | `index.html` |
 | Experience | `experience.html` |
 | Projects | `projects.html` |
 | About | `about.html` |
